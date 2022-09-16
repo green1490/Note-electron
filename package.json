@@ -36,5 +36,8 @@
     "vite",
     "vue3",
     "vue"
-  ]
+  ],
+  "dependencies": {
+    "fix": "^0.0.6"
+  }
 }
