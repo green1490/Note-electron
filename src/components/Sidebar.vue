@@ -1,44 +1,49 @@
 <script setup lang="ts">
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 </script>
 
 <template>
-  <div class="sidenav">
-		<div class="icon">
-			<button  class="btn btn-outline-dark">
-				<i class="fa fa-solid fa-gear"></i>
-			</button>
-		</div>
-	</div>
+  <div class="icon container">
+    <div class="grid-item">
+      <button  class="btn btn-outline-dark">
+        <font-awesome-icon class="fa" icon="fa-solid fa-arrow-right-arrow-left" />
+      </button>
+      <button class="btn btn-outline-dark">
+        <!-- vue-tss bug -->
+        <font-awesome-icon class="fa" icon="fa-solid fa-folder" />
+      </button>
+    </div>
+    <div>
+      <button  class="btn btn-outline-dark">
+        <font-awesome-icon class="fa" icon="fa-solid fa-gear"></font-awesome-icon>
+      </button>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.sidenav {
-  height: 100%;
-  width: 50px;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: #111;
-  overflow-x: hidden;
-  padding-top: 20px;
-}
-.icon,i {
+
+.icon {
 	text-decoration: none;
 	text-align: center;
   font-size: 25px;
-  display: inline-block;
+  color: white;
 }
-/*
-.sidenav button {
-  padding: 6px 16px 6px 20%;
-  text-decoration: none;
-	text-align: center;
-  font-size: 25px;
-  color: #818181;
-  display: inline-block;
+
+.container {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  padding: 0%;
+  /* against overflow */
+  max-width: 50px;
+  height: 95%;
 }
-*/
+
+.grid-item {
+  grid-row-start: 1;
+  grid-row-end: 2;
+}
+
 .fa {
 	color: white;
 	}
