@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
+//min size and width
 import Sidebar from './components/Sidebar.vue'
 </script>
 
@@ -17,7 +18,11 @@ import Sidebar from './components/Sidebar.vue'
       <div>8</div>
     </div>
   </div> -->
-  <Sidebar></Sidebar>
+  <div id="#app">
+    <div class="sidenav">
+      <Sidebar/>
+    </div>
+  </div>
 </template>
 
 <style>
@@ -26,10 +31,23 @@ import Sidebar from './components/Sidebar.vue'
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: grid;
-  color: #2c3e50;
+  padding-left: 60px;
+  padding-top: 20px;
 }
 
-.grid-container {
+.sidenav {
+  height: 100%;
+  width: 50px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0, 0, 0);
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+/* .grid-container {
   display: grid;
   grid-template-columns: 80px 200px auto 30px;
   gap: 10px;
@@ -42,5 +60,5 @@ import Sidebar from './components/Sidebar.vue'
   text-align: center;
   padding: 20px 0;
   font-size: 30px;
-}
+} */
 </style>
