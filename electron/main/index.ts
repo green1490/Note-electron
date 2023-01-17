@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
 
@@ -104,3 +104,13 @@ ipcMain.handle('open-win', (event, arg) => {
     // childWindow.webContents.openDevTools({ mode: "undocked", activate: true })
   }
 })
+
+ipcMain.on('show dialog',(event) => {
+  dialog.showOpenDialog(win,{
+    properties: ['openDirectory']
+  }).then(
+    (path) => {
+      event.reply('path selected',path);
+    }
+  )
+});

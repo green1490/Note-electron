@@ -1,21 +1,32 @@
 <script setup lang="ts">
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {ipcRenderer} from 'electron';
+
+const emit = defineEmits(['pathSelected']);
+
+let fileBrowser = ()=> {
+  ipcRenderer.send('show dialog');
+};
+
+ipcRenderer.on('path selected', (event,path:Electron.OpenDialogReturnValue) => {
+  emit("pathSelected",path);
+});
+
 </script>
 
 <template>
   <div class="icon container">
     <div class="grid-item">
-      <button  class="btn btn-outline-dark">
-        <font-awesome-icon class="fa" icon="fa-solid fa-arrow-right-arrow-left" />
-      </button>
       <button class="btn btn-outline-dark">
-        <!-- vue-tss bug -->
-        <font-awesome-icon class="fa" icon="fa-solid fa-folder" />
+        <font-awesome-icon class="fa" icon="fa-solid fa-arrow-right-arrow-left"/>
+      </button>
+      <button @click="fileBrowser" class="btn btn-outline-dark">
+        <font-awesome-icon class="fa" icon="fa-solid fa-folder"/>
       </button>
     </div>
     <div>
       <button  class="btn btn-outline-dark">
-        <font-awesome-icon class="fa" icon="fa-solid fa-gear"></font-awesome-icon>
+        <font-awesome-icon class="fa" icon="fa-solid fa-gear"/>
       </button>
     </div>
   </div>
@@ -26,7 +37,6 @@
 .icon {
 	text-decoration: none;
 	text-align: center;
-  font-size: 25px;
   color: white;
 }
 

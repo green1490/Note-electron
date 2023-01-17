@@ -1,15 +1,50 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-//min size and width
-import Sidebar from './components/Sidebar.vue'
+import Sidebar from './components/Sidebar.vue';
+import Filebrowser from './components/Filebrowser.vue';
+import {readdirSync, statSync} from 'fs'
+import {sep ,join,} from 'path'
+import {TreeNode} from './components/class/TreeNode'
+import {ref} from 'vue';
+
+let path = ref<string | undefined>();
+let newPath = (newPath:Electron.OpenDialogReturnValue)=> {
+  path.value = newPath.filePaths.at(0);
+};
+
+let tree = (rootPath:string | undefined) => {
+  if(rootPath == undefined)
+    return undefined;
+  else {
+    const root = new TreeNode(rootPath);
+    const stack = [root];
+    while (stack.length) {
+      const currentNode = stack.pop();
+      if (currentNode != undefined) {
+        const children = readdirSync(currentNode.path);
+        for (let child of children) {
+          const childPath = join(currentNode.path,sep,child);
+          const childNode = new TreeNode(childPath);
+          currentNode.children.push(childNode);
+          if (statSync(childNode.path).isDirectory()) {
+              stack.push(childNode);
+          }
+        }
+      }
+      else {
+        return undefined
+      }
+    }
+    return root;
+  }
+};
 </script>
 
 <template>
   <div id="#app">
     <div class="sidenav">
-      <Sidebar/>
+      <Sidebar @pathSelected="newPath" class="sidenav" />
     </div>
+    <Filebrowser :key="path" :node="tree(path)" />
   </div>
 </template>
 
@@ -34,19 +69,4 @@ import Sidebar from './components/Sidebar.vue'
   overflow-x: hidden;
   padding-top: 20px;
 }
-
-/* .grid-container {
-  display: grid;
-  grid-template-columns: 80px 200px auto 30px;
-  gap: 10px;
-  background-color: #2196F3;
-  padding: 10px;
-}
-
-.grid-container > div {
-  background-color: rgba(255, 255, 255, 0.8);
-  text-align: center;
-  padding: 20px 0;
-  font-size: 30px;
-} */
 </style>

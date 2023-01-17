@@ -2,7 +2,7 @@
   "name": "note-electron",
   "version": "1.0.0",
   "main": "dist/electron/main/index.js",
-  "description": "Note taking app with electron that supports markdown",
+  "description": "Electron note taking app with markdown support.",
   "author": "Zámbó Krisztián",
   "license": "GNU General Public License v3.0",
   "private": true,
