@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import Sidebar from './components/Sidebar.vue';
-import Filebrowser from './components/Filebrowser.vue';
-import {readdirSync, statSync} from 'fs'
-import {sep ,join,} from 'path'
-import {TreeNode} from './components/class/TreeNode'
-import {ref} from 'vue';
+import Sidebar from "./components/Sidebar.vue";
+import Filebrowser from "./components/Filebrowser.vue";
+import { readdirSync, statSync } from "fs";
+import { sep, join } from "path";
+import { TreeNode } from "./components/class/TreeNode";
+import { ref } from "vue";
 
 let path = ref<string | undefined>();
-let newPath = (newPath:Electron.OpenDialogReturnValue)=> {
+let newPath = (newPath: Electron.OpenDialogReturnValue) => {
   path.value = newPath.filePaths.at(0);
 };
 
-let tree = (rootPath:string | undefined) => {
-  if(rootPath == undefined)
-    return undefined;
+let tree = (rootPath: string | undefined) => {
+  if (rootPath == undefined) return undefined;
   else {
     const root = new TreeNode(rootPath);
     const stack = [root];
@@ -22,16 +21,15 @@ let tree = (rootPath:string | undefined) => {
       if (currentNode != undefined) {
         const children = readdirSync(currentNode.path);
         for (let child of children) {
-          const childPath = join(currentNode.path,sep,child);
+          const childPath = join(currentNode.path, sep, child);
           const childNode = new TreeNode(childPath);
           currentNode.children.push(childNode);
           if (statSync(childNode.path).isDirectory()) {
-              stack.push(childNode);
+            stack.push(childNode);
           }
         }
-      }
-      else {
-        return undefined
+      } else {
+        return undefined;
       }
     }
     return root;

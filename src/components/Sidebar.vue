@@ -1,42 +1,46 @@
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import {ipcRenderer} from 'electron';
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { ipcRenderer } from "electron";
 
-const emit = defineEmits(['pathSelected']);
+const emit = defineEmits(["pathSelected"]);
 
-let fileBrowser = ()=> {
-  ipcRenderer.send('show dialog');
+let fileBrowser = () => {
+  ipcRenderer.send("show dialog");
 };
 
-ipcRenderer.on('path selected', (event,path:Electron.OpenDialogReturnValue) => {
-  emit("pathSelected",path);
-});
-
+ipcRenderer.on(
+  "path selected",
+  (event, path: Electron.OpenDialogReturnValue) => {
+    emit("pathSelected", path);
+  }
+);
 </script>
 
 <template>
   <div class="icon container">
     <div class="grid-item">
       <button class="btn btn-outline-dark">
-        <font-awesome-icon class="fa" icon="fa-solid fa-arrow-right-arrow-left"/>
+        <font-awesome-icon
+          class="fa"
+          icon="fa-solid fa-arrow-right-arrow-left"
+        />
       </button>
       <button @click="fileBrowser" class="btn btn-outline-dark">
-        <font-awesome-icon class="fa" icon="fa-solid fa-folder"/>
+        <font-awesome-icon class="fa" icon="fa-solid fa-folder" />
       </button>
     </div>
     <div>
-      <button  class="btn btn-outline-dark">
-        <font-awesome-icon class="fa" icon="fa-solid fa-gear"/>
+      <button class="btn btn-outline-dark">
+        <font-awesome-icon class="fa" icon="fa-solid fa-gear" />
       </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-
 .icon {
-	text-decoration: none;
-	text-align: center;
+  text-decoration: none;
+  text-align: center;
   color: white;
 }
 
@@ -55,6 +59,6 @@ ipcRenderer.on('path selected', (event,path:Electron.OpenDialogReturnValue) => {
 }
 
 .fa {
-	color: white;
-	}
+  color: white;
+}
 </style>
