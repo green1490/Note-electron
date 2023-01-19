@@ -87,7 +87,7 @@ let tree = (rootPath: string | undefined) => {
   height: 100vh;
 }
 
-.browser::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
+.browser::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 </style>
