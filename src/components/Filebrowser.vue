@@ -1,27 +1,25 @@
 <template>
-  <div>
-    <div
-      @click="clicked"
-      :style="{ 'margin-left': `${depth * 10}px` }"
-      class="node"
-    >
-      <span v-if="directory && directory != undefined">
-        <font-awesome-icon v-if="expanded" icon="fa-solid fa-folder-open" />
-        <font-awesome-icon v-else icon="fa-solid fa-folder" />
-      </span>
-      <span v-if="!directory && directory != undefined">
-        <font-awesome-icon icon="fa-solid fa-file" />
-      </span>
-      {{ node?.fileName() }}
-    </div>
-    <Filebrowser
-      v-if="expanded"
-      v-for="child in node?.children"
-      :key="child.path"
-      :node="child"
-      :depth="depth + 1"
-    />
+  <div
+    @click="clicked"
+    :style="{ 'margin-left': `${depth * 10}px` }"
+    class="node"
+  >
+    <span v-if="directory && directory != undefined">
+      <font-awesome-icon v-if="expanded" icon="fa-solid fa-folder-open" />
+      <font-awesome-icon v-else icon="fa-solid fa-folder" />
+    </span>
+    <span v-if="!directory && directory != undefined">
+      <!-- <font-awesome-icon icon="fa-solid fa-file" /> -->
+    </span>
+    {{ node?.fileName() }}
   </div>
+  <Filebrowser
+    v-if="expanded"
+    v-for="child in node?.children"
+    :key="child.path"
+    :node="child"
+    :depth="depth + 1"
+  />
 </template>
 
 <script setup lang="ts">
@@ -54,7 +52,7 @@ const directory = computed<Boolean | undefined>(() => {
 
 <style scoped>
 .node {
-  text-align: left;
   font-size: 14px;
+  white-space: nowrap;
 }
 </style>

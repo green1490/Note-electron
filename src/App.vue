@@ -40,9 +40,11 @@ let tree = (rootPath: string | undefined) => {
 <template>
   <div id="#app">
     <div class="sidenav">
-      <Sidebar @pathSelected="newPath" class="sidenav" />
+      <Sidebar @pathSelected="newPath" class="" />
     </div>
-    <Filebrowser :key="path" :node="tree(path)" />
+    <div class="browser">
+      <Filebrowser :key="path" :node="tree(path)" />
+    </div>
   </div>
 </template>
 
@@ -52,8 +54,6 @@ let tree = (rootPath: string | undefined) => {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: grid;
-  padding-left: 60px;
-  padding-top: 20px;
 }
 
 .sidenav {
@@ -62,9 +62,32 @@ let tree = (rootPath: string | undefined) => {
   position: fixed;
   z-index: 1;
   top: 0;
-  left: 0;
-  background-color: rgb(0, 0, 0);
+
+  background-color: black;
   overflow-x: hidden;
-  padding-top: 20px;
+  padding-top: 40px;
+}
+
+.browser {
+  color: white;
+  background-color: #131315;
+}
+
+.browser {
+  overflow-y: scroll;
+  /* overflow-x: hidden; */
+  overflow-x: hidden;
+}
+
+.browser {
+  margin-left: 50px;
+  padding-top: 30px;
+  padding-left: 30px;
+  width: 200px;
+  height: 100vh;
+}
+
+.browser::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
 }
 </style>
