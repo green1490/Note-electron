@@ -6,6 +6,12 @@ import { sep, join } from "path";
 import { TreeNode } from "./components/class/TreeNode";
 import { ref } from "vue";
 
+let opened = ref("browser");
+let closed = ref("browser-collapsed")
+let collapsed = ref(false);
+let collapse = () => {
+  collapsed.value = !collapsed.value;
+};
 let path = ref<string | undefined>();
 let newPath = (newPath: Electron.OpenDialogReturnValue) => {
   path.value = newPath.filePaths.at(0);
@@ -40,9 +46,10 @@ let tree = (rootPath: string | undefined) => {
 <template>
   <div id="#app">
     <div class="sidenav">
-      <Sidebar @pathSelected="newPath" class="" />
+      <Sidebar @collapsed="collapse" @pathSelected="newPath"/>
     </div>
-    <div class="browser">
+    <div class="browser" 
+      :class="[collapsed ? closed : '', opened]">
       <Filebrowser :key="path" :node="tree(path)" />
     </div>
   </div>
@@ -85,6 +92,10 @@ let tree = (rootPath: string | undefined) => {
   padding-top: 30px;
   padding-left: 20px;
   padding-bottom: 20px;
+}
+
+.browser-collapsed {
+  display: none;
 }
 
 .browser::-webkit-scrollbar {
