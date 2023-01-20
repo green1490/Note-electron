@@ -53,5 +53,6 @@ const directory = computed<Boolean | undefined>(() => {
   display: block;
   overflow: hidden;
   border-right: 20px solid transparent;
+  white-space: nowrap;
 }
 </style>
