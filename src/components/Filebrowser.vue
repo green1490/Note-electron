@@ -49,9 +49,9 @@ const directory = computed<Boolean | undefined>(() => {
 
 <style scoped>
 .node {
-  text-overflow: ellipsis; 
-  display: block; 
-  overflow: hidden; 
+  text-overflow: ellipsis;
+  display: block;
+  overflow: hidden;
   border-right: 20px solid transparent;
 }
 </style>
