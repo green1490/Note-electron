@@ -5,7 +5,7 @@
     @mouseleave="hover = false"
     :style="{ 'margin-left': `${depth * 10}px` }"
     class="node"
-    :class="{'node-hover':hover}"
+    :class="{ 'node-hover': hover }"
   >
     <span v-if="directory && directory != undefined">
       <font-awesome-icon v-if="expanded" icon="fa-solid fa-folder-open" />
@@ -61,7 +61,7 @@ const directory = computed<Boolean | undefined>(() => {
   white-space: nowrap;
 }
 
-.node-hover{
+.node-hover {
   cursor: pointer;
   background-color: #3d3b3b;
 }

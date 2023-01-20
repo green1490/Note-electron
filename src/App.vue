@@ -7,7 +7,7 @@ import { TreeNode } from "./components/class/TreeNode";
 import { ref } from "vue";
 
 let opened = ref("browser");
-let closed = ref("browser-collapsed")
+let closed = ref("browser-collapsed");
 let collapsed = ref(false);
 let collapse = () => {
   collapsed.value = !collapsed.value;
@@ -46,10 +46,9 @@ let tree = (rootPath: string | undefined) => {
 <template>
   <div id="#app">
     <div class="sidenav">
-      <Sidebar @collapsed="collapse" @pathSelected="newPath"/>
+      <Sidebar @collapsed="collapse" @pathSelected="newPath" />
     </div>
-    <div class="browser" 
-      :class="[collapsed ? closed : '', opened]">
+    <div class="browser" :class="[collapsed ? closed : '', opened]">
       <Filebrowser :key="path" :node="tree(path)" />
     </div>
   </div>
