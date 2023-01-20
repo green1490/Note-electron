@@ -1,8 +1,11 @@
 <template>
   <div
     @click="clicked"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
     :style="{ 'margin-left': `${depth * 10}px` }"
     class="node"
+    :class="{'node-hover':hover}"
   >
     <span v-if="directory && directory != undefined">
       <font-awesome-icon v-if="expanded" icon="fa-solid fa-folder-open" />
@@ -25,6 +28,8 @@ import { ref } from "vue";
 import { TreeNode } from "./class/TreeNode";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { statSync } from "fs";
+
+const hover = ref(false);
 
 const expanded = ref(false);
 const props = defineProps({
@@ -54,5 +59,10 @@ const directory = computed<Boolean | undefined>(() => {
   overflow: hidden;
   border-right: 20px solid transparent;
   white-space: nowrap;
+}
+
+.node-hover{
+  cursor: pointer;
+  background-color: #3d3b3b;
 }
 </style>
