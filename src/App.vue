@@ -75,16 +75,16 @@ let tree = (rootPath: string | undefined) => {
 
 .browser {
   overflow-y: scroll;
-  /* overflow-x: hidden; */
   overflow-x: hidden;
 }
 
 .browser {
-  margin-left: 50px;
-  padding-top: 30px;
-  padding-left: 30px;
   width: 200px;
   height: 100vh;
+  margin-left: 50px;
+  padding-top: 30px;
+  padding-left: 20px;
+  padding-bottom: 20px;
 }
 
 .browser::-webkit-scrollbar {

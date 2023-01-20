@@ -8,9 +8,6 @@
       <font-awesome-icon v-if="expanded" icon="fa-solid fa-folder-open" />
       <font-awesome-icon v-else icon="fa-solid fa-folder" />
     </span>
-    <span v-if="!directory && directory != undefined">
-      <!-- <font-awesome-icon icon="fa-solid fa-file" /> -->
-    </span>
     {{ node?.fileName() }}
   </div>
   <Filebrowser
@@ -52,7 +49,9 @@ const directory = computed<Boolean | undefined>(() => {
 
 <style scoped>
 .node {
-  font-size: 14px;
-  white-space: nowrap;
+  text-overflow: ellipsis; 
+  display: block; 
+  overflow: hidden; 
+  border-right: 20px solid transparent;
 }
 </style>
