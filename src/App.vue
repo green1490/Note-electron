@@ -13,8 +13,8 @@ let collapse = () => {
   collapsed.value = !collapsed.value;
 };
 let path = ref<string | undefined>();
-let newPath = (newPath: Electron.OpenDialogReturnValue) => {
-  path.value = newPath.filePaths.at(0);
+let newPath = (newPathValue: Electron.OpenDialogReturnValue) => {
+  path.value = newPathValue.filePaths.at(0);
 };
 
 let tree = (rootPath: string | undefined) => {
