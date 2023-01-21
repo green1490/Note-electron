@@ -4,12 +4,12 @@ import { ipcRenderer } from "electron";
 
 const emit = defineEmits(["pathSelected", "collapsed"]);
 
-let fileBrowser = () => {
-  ipcRenderer
-    .invoke("show dialog")
-    .then((path: Electron.OpenDialogReturnValue) => {
-      emit("pathSelected", path);
-    });
+let fileBrowser = async () => {
+  let path:Electron.OpenDialogReturnValue = await ipcRenderer.invoke("show dialog");
+  emit("pathSelected", path);
+};
+let collapse = () => {
+  emit('collapsed');
 };
 </script>
 
@@ -20,7 +20,7 @@ let fileBrowser = () => {
         <font-awesome-icon
           class="fa"
           icon="fa-solid fa-arrow-right-arrow-left"
-          @click="emit('collapsed')"
+          @click="collapse"
         />
       </button>
       <button @click="fileBrowser" class="btn btn-outline-dark">
