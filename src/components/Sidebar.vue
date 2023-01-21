@@ -5,12 +5,12 @@ import { ipcRenderer } from "electron";
 const emit = defineEmits(["pathSelected", "collapsed"]);
 
 let fileBrowser = () => {
-  ipcRenderer.invoke("show dialog").then((path:Electron.OpenDialogReturnValue) => {
-    emit("pathSelected",path)
-  });
+  ipcRenderer
+    .invoke("show dialog")
+    .then((path: Electron.OpenDialogReturnValue) => {
+      emit("pathSelected", path);
+    });
 };
-
-
 </script>
 
 <template>

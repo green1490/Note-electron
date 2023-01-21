@@ -106,10 +106,8 @@ ipcMain.handle("open-win", (event, arg) => {
 });
 
 ipcMain.handle("show dialog", async (event) => {
-  let selectedPath = await dialog.showOpenDialog(
-    win, {
-      properties:["openDirectory"]
-    }
-  )
+  let selectedPath = await dialog.showOpenDialog(win, {
+    properties: ["openDirectory"],
+  });
   return selectedPath;
 });
