@@ -47,7 +47,7 @@ let tree = (rootPath: string | undefined) => {
     <div class="sidenav">
       <Sidebar @collapsed="collapse" @path-selected="newPath" />
     </div>
-    <div v-show="collapsed" class="browser" >
+    <div v-show="collapsed" class="browser">
       <Filebrowser :key="path" :node="tree(path)" />
     </div>
   </div>
