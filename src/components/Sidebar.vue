@@ -2,13 +2,13 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { ipcRenderer } from "electron";
 
-const emit = defineEmits(["pathSelected", "collapsed"]);
+const emit = defineEmits(["path-selected", "collapsed"]);
 
 let fileBrowser = async () => {
   let path: Electron.OpenDialogReturnValue = await ipcRenderer.invoke(
     "show dialog"
   );
-  emit("pathSelected", path);
+  emit("path-selected", path);
 };
 let collapse = () => {
   emit("collapsed");
@@ -18,11 +18,10 @@ let collapse = () => {
 <template>
   <div class="icon container">
     <div class="grid-item">
-      <button class="btn btn-outline-dark">
+      <button class="btn btn-outline-dark" @click="collapse">
         <font-awesome-icon
           class="fa"
           icon="fa-solid fa-arrow-right-arrow-left"
-          @click="collapse"
         />
       </button>
       <button @click="fileBrowser" class="btn btn-outline-dark">
