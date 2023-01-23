@@ -21,7 +21,7 @@ let tree = (rootPath: string | undefined) => {
   else {
     const root = new TreeNode(rootPath);
     const stack = [root];
-    
+
     while (stack.length) {
       const currentNode = stack.pop();
       if (currentNode != undefined) {
@@ -31,20 +31,17 @@ let tree = (rootPath: string | undefined) => {
             const childPath = join(currentNode.path, sep, child);
             const childNode = new TreeNode(childPath);
             currentNode.children.push(childNode);
-            
+
             try {
               if (statSync(childNode.path).isDirectory()) {
                 stack.push(childNode);
               }
-            }
-            
-            catch(error){
-              console.warn(`Wrong path: ${error}`); 
+            } catch (error) {
+              console.warn(`Wrong path: ${error}`);
             }
           }
-        }
-        catch(error) {
-          console.warn(`Cant acces the directory: ${error}`)
+        } catch (error) {
+          console.warn(`Cant acces the directory: ${error}`);
         }
       } else {
         return currentNode;
