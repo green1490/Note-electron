@@ -1,6 +1,7 @@
 <template>
   <div
-    @click="clicked"
+    @click.left="clicked"
+    @click.right="contextMenu"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
     :style="{ 'margin-left': `${depth * 10}px` }"
@@ -28,6 +29,7 @@ import { ref } from "vue";
 import { TreeNode } from "./class/TreeNode";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { statSync } from "fs";
+import {ipcRenderer} from 'electron'
 
 const hover = ref(false);
 
@@ -39,6 +41,10 @@ const props = defineProps({
     default: 0,
   },
 });
+
+const contextMenu = () => {
+  ipcRenderer.send("context-menu",props.node?.fileName(),props.node?.path);
+};
 
 const clicked = () => {
   expanded.value = !expanded.value;

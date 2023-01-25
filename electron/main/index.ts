@@ -1,6 +1,7 @@
-import { app, BrowserWindow, shell, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, shell, ipcMain, dialog, Menu } from "electron";
 import { release } from "os";
 import { join } from "path";
+import {menu} from '../context-menu'
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
@@ -24,6 +25,17 @@ export const ROOT_PATH = {
   // /dist or /public
   public: join(__dirname, app.isPackaged ? "../.." : "../../../public"),
 };
+
+// const template: MenuItemConstructorOptions[] = [
+//   {
+//       label: 'New file',
+//       click: ()=> {
+          
+//       }
+//   },
+  
+// ];
+// let menu = Menu.buildFromTemplate(template);
 
 let win: BrowserWindow | null = null;
 // Here, you can also use other preload
@@ -107,9 +119,18 @@ ipcMain.handle("open-win", (event, arg) => {
   }
 });
 
-ipcMain.handle("show dialog", async (event) => {
+ipcMain.handle("show-dialog", async () => {
   let selectedPath = await dialog.showOpenDialog(win, {
     properties: ["openDirectory"],
   });
   return selectedPath;
+});
+
+export let name:String;
+export let path:String;
+
+ipcMain.on("context-menu", (event,nameParameter:String,pathParameter) => {
+  menu.popup()
+  name = nameParameter;
+  path = pathParameter
 });

@@ -6,7 +6,7 @@ const emit = defineEmits(["path-selected", "collapsed"]);
 
 let fileBrowser = async () => {
   let path: Electron.OpenDialogReturnValue = await ipcRenderer.invoke(
-    "show dialog"
+    "show-dialog"
   );
   emit("path-selected", path);
 };
