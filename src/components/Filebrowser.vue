@@ -29,7 +29,7 @@ import { ref } from "vue";
 import { TreeNode } from "./class/TreeNode";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { statSync } from "fs";
-import {ipcRenderer} from 'electron'
+import { ipcRenderer } from "electron";
 
 const hover = ref(false);
 
@@ -43,7 +43,7 @@ const props = defineProps({
 });
 
 const contextMenu = () => {
-  ipcRenderer.send("context-menu",props.node?.fileName(),props.node?.path);
+  ipcRenderer.send("context-menu", props.node?.fileName(), props.node?.path);
 };
 
 const clicked = () => {

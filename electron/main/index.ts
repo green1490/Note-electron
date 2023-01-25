@@ -1,7 +1,7 @@
 import { app, BrowserWindow, shell, ipcMain, dialog, Menu } from "electron";
 import { release } from "os";
 import { join } from "path";
-import {menu} from '../context-menu'
+import { menu } from "../context-menu";
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
@@ -30,10 +30,10 @@ export const ROOT_PATH = {
 //   {
 //       label: 'New file',
 //       click: ()=> {
-          
+
 //       }
 //   },
-  
+
 // ];
 // let menu = Menu.buildFromTemplate(template);
 
@@ -47,8 +47,8 @@ async function createWindow() {
   win = new BrowserWindow({
     title: "Note app",
     icon: join(ROOT_PATH.public, "favicon.ico"),
-    minWidth:800,
-    minHeight:600,
+    minWidth: 800,
+    minHeight: 600,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
@@ -126,11 +126,11 @@ ipcMain.handle("show-dialog", async () => {
   return selectedPath;
 });
 
-export let name:String;
-export let path:String;
+export let name: String;
+export let path: String;
 
-ipcMain.on("context-menu", (event,nameParameter:String,pathParameter) => {
-  menu.popup()
+ipcMain.on("context-menu", (event, nameParameter: String, pathParameter) => {
+  menu.popup();
   name = nameParameter;
-  path = pathParameter
+  path = pathParameter;
 });
