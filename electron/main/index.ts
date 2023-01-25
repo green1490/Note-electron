@@ -35,6 +35,8 @@ async function createWindow() {
   win = new BrowserWindow({
     title: "Note app",
     icon: join(ROOT_PATH.public, "favicon.ico"),
+    minWidth:800,
+    minHeight:600,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
