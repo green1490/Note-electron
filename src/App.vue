@@ -57,9 +57,11 @@ let tree = (rootPath: string | undefined) => {
     <div class="sidenav">
       <Sidebar @collapsed="collapse" @path-selected="newPath" />
     </div>
-    <div v-show="collapsed" class="browser">
-      <Filebrowser :key="path" :node="tree(path)" />
-    </div>
+    <Transition>
+      <div v-show="collapsed" class="browser">
+        <Filebrowser :key="path" :node="tree(path)" />
+      </div>
+  </Transition>
   </div>
 </template>
 
@@ -102,8 +104,14 @@ let tree = (rootPath: string | undefined) => {
   padding-bottom: 20px;
 }
 
-.browser-collapsed {
-  display: none;
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 
 .browser::-webkit-scrollbar {
