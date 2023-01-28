@@ -83,23 +83,17 @@ const newPath = (newPathValue: Electron.OpenDialogReturnValue) => {
   node.value = tree(path.value);
 };
 
-ipcRenderer.on(
-  "new-file",
-  (_, path: string, newFile: string) => {
-    if (node.value != undefined) {
-      insertNode(node.value, path, newFile);
-    }
+ipcRenderer.on("new-file", (_, path: string, newFile: string) => {
+  if (node.value != undefined) {
+    insertNode(node.value, path, newFile);
   }
-);
+});
 
-ipcRenderer.on(
-  "new-folder",
-  (_,path,newFolder) => {
-    if (node.value != undefined) {
-      insertNode(node.value,path,newFolder);
-    }
+ipcRenderer.on("new-folder", (_, path, newFolder) => {
+  if (node.value != undefined) {
+    insertNode(node.value, path, newFolder);
   }
-)
+});
 
 ipcRenderer.on("delete", (_, path) => {
   if (node.value != undefined) {

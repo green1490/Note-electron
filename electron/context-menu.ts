@@ -17,14 +17,14 @@ const template: MenuItemConstructorOptions[] = [
     label: "New folder",
     click: () => {
       let folderName = "new_folder";
-      let folderPath = join(path.toString(),sep,folderName);
-      mkdir(folderPath,(err) => {
-        if(err) {
+      let folderPath = join(path.toString(), sep, folderName);
+      mkdir(folderPath, (err) => {
+        if (err) {
           console.log(err);
         }
       });
-      win.webContents.send("new-folder",path,folderName);
-    }
+      win.webContents.send("new-folder", path, folderName);
+    },
   },
   {
     label: "Delete",
