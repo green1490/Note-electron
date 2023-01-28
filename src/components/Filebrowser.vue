@@ -56,7 +56,6 @@ const directory = computed<Boolean | undefined>(() => {
     return statSync(props.node.path).isDirectory();
   }
 });
-
 </script>
 
 <style scoped>

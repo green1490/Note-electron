@@ -5,7 +5,7 @@ import { readdirSync, statSync } from "fs";
 import { sep, join } from "path";
 import { TreeNode } from "./components/class/TreeNode";
 import { ref } from "vue";
-import { ipcRenderer } from "electron"
+import { ipcRenderer } from "electron";
 
 let node = ref<TreeNode>();
 let collapsed = ref(true);
@@ -49,33 +49,31 @@ const tree = (rootPath: string | undefined) => {
   }
 };
 
-const insertFile = (tree:TreeNode,path:string,fileName:string) => {
-  if(tree.path == path) {
-    tree.children.push(new TreeNode(join(path,sep,fileName)));
-  }
-  else {
+const insertFile = (tree: TreeNode, path: string, fileName: string) => {
+  if (tree.path == path) {
+    tree.children.push(new TreeNode(join(path, sep, fileName)));
+  } else {
     let children = tree.children;
     children.forEach((node) => {
-      insertFile(node,path,fileName);
+      insertFile(node, path, fileName);
     });
   }
 };
 
-const removeNode = (tree:TreeNode,path:string) => {
+const removeNode = (tree: TreeNode, path: string) => {
   let child = tree.children;
-  let fileIndex = child.findIndex((node,index):boolean => {
-    if(node.path == path) {
-      return true
+  let fileIndex = child.findIndex((node, index): boolean => {
+    if (node.path == path) {
+      return true;
     }
-    return false
+    return false;
   });
-  
-  if(fileIndex != -1) {
-    child.splice(fileIndex,1);
-  }
-  else {
+
+  if (fileIndex != -1) {
+    child.splice(fileIndex, 1);
+  } else {
     child.forEach((node) => {
-      removeNode(node,path);
+      removeNode(node, path);
     });
   }
 };
@@ -85,15 +83,18 @@ const newPath = (newPathValue: Electron.OpenDialogReturnValue) => {
   node.value = tree(path.value);
 };
 
-ipcRenderer.on("new-file", (event:Electron.IpcRendererEvent,path:string,newFile:string) => {
-  if (node.value != undefined) {
-    insertFile(node.value,path,newFile);
+ipcRenderer.on(
+  "new-file",
+  (event: Electron.IpcRendererEvent, path: string, newFile: string) => {
+    if (node.value != undefined) {
+      insertFile(node.value, path, newFile);
+    }
   }
-});
+);
 
-ipcRenderer.on("delete", (_,path) => {
-  if(node.value != undefined) {
-    removeNode(node.value,path);
+ipcRenderer.on("delete", (_, path) => {
+  if (node.value != undefined) {
+    removeNode(node.value, path);
   }
 });
 </script>
@@ -101,13 +102,11 @@ ipcRenderer.on("delete", (_,path) => {
 <template>
   <div id="#app">
     <div class="sidenav">
-      <Sidebar 
-        @collapsed="collapse" 
-        @path-selected="newPath"/>
+      <Sidebar @collapsed="collapse" @path-selected="newPath" />
     </div>
     <Transition>
       <div v-show="collapsed" class="browser">
-        <Filebrowser :node="node"/>
+        <Filebrowser :node="node" />
       </div>
     </Transition>
   </div>

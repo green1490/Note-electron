@@ -126,7 +126,6 @@ ipcMain.handle("show-dialog", async () => {
   return selectedPath;
 });
 
-
 export let path: String;
 
 ipcMain.on("context-menu", (_, pathParameter) => {
