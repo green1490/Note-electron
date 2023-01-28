@@ -5,18 +5,16 @@ import { readdirSync, statSync } from "fs";
 import { sep, join } from "path";
 import { TreeNode } from "./components/class/TreeNode";
 import { ref } from "vue";
+import { ipcRenderer } from "electron"
 
+let node = ref<TreeNode>();
 let collapsed = ref(true);
-let collapse = () => {
+const collapse = () => {
   collapsed.value = !collapsed.value;
 };
 
 let path = ref<string | undefined>();
-let newPath = (newPathValue: Electron.OpenDialogReturnValue) => {
-  path.value = newPathValue.filePaths.at(0);
-};
-
-let tree = (rootPath: string | undefined) => {
+const tree = (rootPath: string | undefined) => {
   if (rootPath == undefined) return undefined;
   else {
     const root = new TreeNode(rootPath);
@@ -50,18 +48,68 @@ let tree = (rootPath: string | undefined) => {
     return root;
   }
 };
+
+const insertFile = (tree:TreeNode,path:string,fileName:string) => {
+  if(tree.path == path) {
+    tree.children.push(new TreeNode(join(path,sep,fileName)));
+  }
+  else {
+    let children = tree.children;
+    children.forEach((node) => {
+      insertFile(node,path,fileName);
+    });
+  }
+};
+
+const removeNode = (tree:TreeNode,path:string) => {
+  let child = tree.children;
+  let fileIndex = child.findIndex((node,index):boolean => {
+    if(node.path == path) {
+      return true
+    }
+    return false
+  });
+  
+  if(fileIndex != -1) {
+    child.splice(fileIndex,1);
+  }
+  else {
+    child.forEach((node) => {
+      removeNode(node,path);
+    });
+  }
+};
+
+const newPath = (newPathValue: Electron.OpenDialogReturnValue) => {
+  path.value = newPathValue.filePaths.at(0);
+  node.value = tree(path.value);
+};
+
+ipcRenderer.on("new-file", (event:Electron.IpcRendererEvent,path:string,newFile:string) => {
+  if (node.value != undefined) {
+    insertFile(node.value,path,newFile);
+  }
+});
+
+ipcRenderer.on("delete", (_,path) => {
+  if(node.value != undefined) {
+    removeNode(node.value,path);
+  }
+});
 </script>
 
 <template>
   <div id="#app">
     <div class="sidenav">
-      <Sidebar @collapsed="collapse" @path-selected="newPath" />
+      <Sidebar 
+        @collapsed="collapse" 
+        @path-selected="newPath"/>
     </div>
     <Transition>
       <div v-show="collapsed" class="browser">
-        <Filebrowser :key="path" :node="tree(path)" />
+        <Filebrowser :node="node"/>
       </div>
-  </Transition>
+    </Transition>
   </div>
 </template>
 

@@ -37,7 +37,7 @@ export const ROOT_PATH = {
 // ];
 // let menu = Menu.buildFromTemplate(template);
 
-let win: BrowserWindow | null = null;
+export let win: BrowserWindow | null = null;
 // Here, you can also use other preload
 const preload = join(__dirname, "../preload/index.js");
 const url = process.env.VITE_DEV_SERVER_URL as string;
@@ -126,11 +126,10 @@ ipcMain.handle("show-dialog", async () => {
   return selectedPath;
 });
 
-export let name: String;
+
 export let path: String;
 
-ipcMain.on("context-menu", (event, nameParameter: String, pathParameter) => {
+ipcMain.on("context-menu", (_, pathParameter) => {
   menu.popup();
-  name = nameParameter;
   path = pathParameter;
 });
