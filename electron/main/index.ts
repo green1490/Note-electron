@@ -26,17 +26,6 @@ export const ROOT_PATH = {
   public: join(__dirname, app.isPackaged ? "../.." : "../../../public"),
 };
 
-// const template: MenuItemConstructorOptions[] = [
-//   {
-//       label: 'New file',
-//       click: ()=> {
-
-//       }
-//   },
-
-// ];
-// let menu = Menu.buildFromTemplate(template);
-
 export let win: BrowserWindow | null = null;
 // Here, you can also use other preload
 const preload = join(__dirname, "../preload/index.js");

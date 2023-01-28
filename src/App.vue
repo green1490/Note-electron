@@ -49,13 +49,13 @@ const tree = (rootPath: string | undefined) => {
   }
 };
 
-const insertFile = (tree: TreeNode, path: string, fileName: string) => {
+const insertNode = (tree: TreeNode, path: string, nodeName: string) => {
   if (tree.path == path) {
-    tree.children.push(new TreeNode(join(path, sep, fileName)));
+    tree.children.push(new TreeNode(join(path, sep, nodeName)));
   } else {
     let children = tree.children;
     children.forEach((node) => {
-      insertFile(node, path, fileName);
+      insertNode(node, path, nodeName);
     });
   }
 };
@@ -85,12 +85,21 @@ const newPath = (newPathValue: Electron.OpenDialogReturnValue) => {
 
 ipcRenderer.on(
   "new-file",
-  (event: Electron.IpcRendererEvent, path: string, newFile: string) => {
+  (_, path: string, newFile: string) => {
     if (node.value != undefined) {
-      insertFile(node.value, path, newFile);
+      insertNode(node.value, path, newFile);
     }
   }
 );
+
+ipcRenderer.on(
+  "new-folder",
+  (_,path,newFolder) => {
+    if (node.value != undefined) {
+      insertNode(node.value,path,newFolder);
+    }
+  }
+)
 
 ipcRenderer.on("delete", (_, path) => {
   if (node.value != undefined) {
