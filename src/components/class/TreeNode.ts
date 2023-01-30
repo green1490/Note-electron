@@ -9,6 +9,11 @@ export class TreeNode {
     this.children = [];
   }
 
+  //file name without the extension
+  stem(): String {
+    return this.path.split(sep).at(-1)?.split(".").at(0) as String;
+  }
+
   fileName(): String {
     return this.path.split(sep).at(-1) as String;
   }

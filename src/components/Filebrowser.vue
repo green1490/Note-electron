@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div :contenteditable="editable"
     @click.left="clicked"
     @click.right="contextMenu"
     @mouseenter="hover = true"
@@ -12,7 +12,7 @@
       <font-awesome-icon v-if="expanded" icon="fa-solid fa-folder-open" />
       <font-awesome-icon v-else icon="fa-solid fa-folder" />
     </span>
-    {{ node?.fileName() }}
+    {{ node?.stem() }}
   </div>
   <Filebrowser
     v-if="expanded"
