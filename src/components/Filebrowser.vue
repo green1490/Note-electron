@@ -1,6 +1,5 @@
 <template>
   <div
-    :contenteditable="editable"
     @click.left="clicked"
     @click.right="contextMenu"
     @mouseenter="hover = true"
