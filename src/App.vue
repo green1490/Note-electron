@@ -1,99 +1,100 @@
 <script setup lang="ts">
-import Sidebar from "./components/Sidebar.vue";
-import Filebrowser from "./components/Filebrowser.vue";
-import { readdirSync, statSync } from "fs";
-import { sep, join } from "path";
-import { TreeNode } from "./components/class/TreeNode";
-import { ref } from "vue";
-import { ipcRenderer } from "electron";
+import { readdirSync, statSync } from 'fs'
+import { sep, join } from 'path'
+import { TreeNode } from './components/class/TreeNode'
+import { ref } from 'vue'
+import { ipcRenderer, OpenDialogReturnValue } from 'electron'
+import Sidebar from './components/Sidebar.vue'
+import FileBrowser from './components/Filebrowser.vue'
 
-let node = ref<TreeNode>();
-let collapsed = ref(true);
 const collapse = () => {
-  collapsed.value = !collapsed.value;
-};
+  collapsed.value = !collapsed.value
+}
 
-let path = ref<string | undefined>();
+const collapsed = ref(true)
+const node = ref<TreeNode | undefined>(undefined)
+const path = ref<string | undefined>(undefined)
+
 const tree = (rootPath: string | undefined) => {
-  if (rootPath == undefined) return undefined;
+  if (rootPath === undefined) return undefined
   else {
-    const root = new TreeNode(rootPath);
-    const stack = [root];
+    const root = new TreeNode(rootPath)
+    const stack = [root]
 
     while (stack.length) {
-      const currentNode = stack.pop();
-      if (currentNode != undefined) {
+      const currentNode = stack.pop()
+      if (currentNode !== undefined) {
         try {
-          const children = readdirSync(currentNode.path);
-          for (let child of children) {
-            const childPath = join(currentNode.path, sep, child);
-            const childNode = new TreeNode(childPath);
-            currentNode.children.push(childNode);
+          const children = readdirSync(currentNode.path)
+          for (const child of children) {
+            const childPath = join(currentNode.path, sep, child)
+            const childNode = new TreeNode(childPath)
+            currentNode.children.push(childNode)
 
             try {
               if (statSync(childNode.path).isDirectory()) {
-                stack.push(childNode);
+                stack.push(childNode)
               }
             } catch (error) {
-              console.warn(`Wrong path: ${error}`);
+              console.warn(`Wrong path: ${error}`)
             }
           }
         } catch (error) {
-          console.warn(`Cant acces the directory: ${error}`);
+          console.warn(`Cant acces the directory: ${error}`)
         }
       } else {
-        return currentNode;
+        return currentNode
       }
     }
-    return root;
+    return root
   }
-};
+}
 
 const insertNode = (tree: TreeNode, path: string, nodeName: string) => {
-  if (tree.path == path) {
-    tree.children.push(new TreeNode(join(path, sep, nodeName)));
+  if (tree.path === path) {
+    tree.children.push(new TreeNode(join(path, sep, nodeName)))
   } else {
-    let children = tree.children;
+    const children = tree.children
     children.forEach((node) => {
-      insertNode(node, path, nodeName);
-    });
+      insertNode(node, path, nodeName)
+    })
   }
-};
+}
 
 const removeNode = (tree: TreeNode, path: string) => {
-  let child = tree.children;
-  let fileIndex = child.findIndex((node, index): boolean => {
-    if (node.path == path) {
-      return true;
+  const child = tree.children
+  const fileIndex = child.findIndex((node, index): boolean => {
+    if (node.path === path) {
+      return true
     }
-    return false;
-  });
+    return false
+  })
 
-  if (fileIndex != -1) {
-    child.splice(fileIndex, 1);
+  if (fileIndex !== -1) {
+    child.splice(fileIndex, 1)
   } else {
     child.forEach((node) => {
-      removeNode(node, path);
-    });
+      removeNode(node, path)
+    })
   }
-};
+}
 
-const newPath = (newPathValue: Electron.OpenDialogReturnValue) => {
-  path.value = newPathValue.filePaths.at(0);
-  node.value = tree(path.value);
-};
+const newPath = (newPathValue: OpenDialogReturnValue) => {
+  path.value = newPathValue.filePaths.at(0)
+  node.value = tree(path.value)
+}
 
-ipcRenderer.on("new-node", (_, path: string, nodeName: string) => {
-  if (node.value != undefined) {
-    insertNode(node.value, path, nodeName);
+ipcRenderer.on('new-node', (_, path: string, nodeName: string) => {
+  if (node.value !== undefined) {
+    insertNode(node.value, path, nodeName)
   }
-});
+})
 
-ipcRenderer.on("delete", (_, path) => {
-  if (node.value != undefined) {
-    removeNode(node.value, path);
+ipcRenderer.on('delete', (_, path) => {
+  if (node.value !== undefined) {
+    removeNode(node.value, path)
   }
-});
+})
 </script>
 
 <template>
@@ -103,7 +104,7 @@ ipcRenderer.on("delete", (_, path) => {
     </div>
     <Transition>
       <div v-show="collapsed" class="browser">
-        <Filebrowser v-if="node != undefined" :node="node" />
+        <FileBrowser v-if="node != undefined" :node="node"/>
       </div>
     </Transition>
   </div>

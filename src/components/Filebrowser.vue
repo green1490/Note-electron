@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div
     @click.left="clicked"
@@ -14,48 +15,49 @@
     </span>
     {{ node?.stem() }}
   </div>
-  <Filebrowser
-    v-if="expanded"
-    v-for="child in node?.children"
+  <div v-if="expanded">
+    <Filebrowser
+    v-for="(child, index) in node?.children"
+    :key="index"
     :node="child"
     :depth="depth + 1"
   />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "@vue/reactivity";
-import { ref, reactive } from "vue";
-import { TreeNode } from "./class/TreeNode";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { statSync } from "fs";
-import { ipcRenderer } from "electron";
+import { computed, ref } from 'vue'
+import { TreeNode } from './class/TreeNode'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { statSync } from 'fs'
+import { ipcRenderer } from 'electron'
 
-const hover = ref(false);
-const expanded = ref(false);
+const hover = ref(false)
+const expanded = ref(false)
 
 const props = defineProps({
   node: TreeNode,
   depth: {
     type: Number,
-    default: 0,
-  },
-});
+    default: 0
+  }
+})
 
 const contextMenu = () => {
-  ipcRenderer.send("context-menu", props.node?.path);
-};
+  ipcRenderer.send('context-menu', props.node?.path)
+}
 
 const clicked = () => {
-  expanded.value = !expanded.value;
-};
+  expanded.value = !expanded.value
+}
 
-const directory = computed<Boolean | undefined>(() => {
-  if (props.node?.path == undefined) {
-    return undefined;
+const directory = computed < Boolean | undefined >(() => {
+  if (props.node?.path === undefined) {
+    return undefined
   } else {
-    return statSync(props.node.path).isDirectory();
+    return statSync(props.node.path).isDirectory()
   }
-});
+})
 </script>
 
 <style scoped>
