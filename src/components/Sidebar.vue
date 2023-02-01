@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { ipcRenderer } from "electron";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { ipcRenderer, OpenDialogReturnValue } from 'electron'
 
-const emit = defineEmits(["path-selected", "collapsed"]);
+const emit = defineEmits(['path-selected', 'collapsed'])
 
-let fileBrowser = async () => {
-  let path: Electron.OpenDialogReturnValue = await ipcRenderer.invoke(
-    "show-dialog"
-  );
-  emit("path-selected", path);
-};
-let collapse = () => {
-  emit("collapsed");
-};
+const fileBrowser = async () => {
+  const path: OpenDialogReturnValue = await ipcRenderer.invoke(
+    'show-dialog'
+  )
+  emit('path-selected', path)
+}
+const collapse = () => {
+  emit('collapsed')
+}
 </script>
 
 <template>
-  <div class="icon container">
-    <div class="grid-item">
+  <div class="container icon">
+    <div>
+      <button @click="fileBrowser" class="btn btn-outline-dark">
+        <font-awesome-icon
+          class="fa"
+          icon="fa-solid fa-folder"/>
+      </button>
       <button class="btn btn-outline-dark" @click="collapse">
         <font-awesome-icon
           class="fa"
-          icon="fa-solid fa-arrow-right-arrow-left"
-        />
-      </button>
-      <button @click="fileBrowser" class="btn btn-outline-dark">
-        <font-awesome-icon class="fa" icon="fa-solid fa-folder" />
+          icon="fa-solid fa-arrow-right-arrow-left"/>
       </button>
     </div>
     <div>
@@ -38,23 +39,15 @@ let collapse = () => {
 
 <style scoped>
 .icon {
-  text-decoration: none;
-  text-align: center;
   color: white;
 }
 
 .container {
   display: grid;
-  grid-template-rows: 1fr 1fr;
-  padding: 0%;
-  /* against overflow */
-  max-width: 50px;
-  height: 95%;
-}
-
-.grid-item {
-  grid-row-start: 1;
-  grid-row-end: 2;
+  grid-template-rows: 0.1fr 3fr 0.4fr;
+  justify-content: center;
+  height: inherit;
+  width: inherit;
 }
 
 .fa {

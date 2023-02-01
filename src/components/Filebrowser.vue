@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div
     @click.left="clicked"
@@ -63,9 +62,7 @@ const directory = computed < Boolean | undefined >(() => {
 <style scoped>
 .node {
   text-overflow: ellipsis;
-  display: block;
   overflow: hidden;
-  border-right: 20px solid transparent;
   white-space: nowrap;
 }
 

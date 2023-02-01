@@ -6,6 +6,7 @@ import { ref } from 'vue'
 import { ipcRenderer, OpenDialogReturnValue } from 'electron'
 import Sidebar from './components/Sidebar.vue'
 import FileBrowser from './components/Filebrowser.vue'
+import Editor from './components/Editor.vue'
 
 const collapse = () => {
   collapsed.value = !collapsed.value
@@ -100,14 +101,15 @@ ipcRenderer.on('delete', (_, path) => {
 <template>
   <div id="#app">
     <div class="sidenav">
-      <Sidebar @collapsed="collapse" @path-selected="newPath" />
+      <Sidebar class="sidenav" @collapsed="collapse" @path-selected="newPath" />
     </div>
-    <Transition>
-      <div v-show="collapsed" class="browser">
-        <FileBrowser v-if="node != undefined" :node="node"/>
-      </div>
-    </Transition>
   </div>
+  <Transition>
+    <div v-show="collapsed" class="browser" >
+      <FileBrowser v-if="node != undefined" :node="node"/>
+    </div>
+  </Transition>
+  <Editor/>
 </template>
 
 <style>
@@ -116,37 +118,23 @@ ipcRenderer.on('delete', (_, path) => {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: grid;
+  grid-template-columns: 50px 200px max-content;
+  width: 100vw;
+  height: 100vh;
 }
 
 .sidenav {
-  height: 100%;
-  width: 50px;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-
+  height: 100vh;
   background-color: black;
-  overflow-x: hidden;
-  padding-top: 40px;
 }
 
 .browser {
   color: white;
   background-color: #131315;
 }
-
 .browser {
   overflow-y: scroll;
   overflow-x: hidden;
-}
-
-.browser {
-  width: 200px;
-  height: 100vh;
-  margin-left: 50px;
-  padding-top: 30px;
-  padding-left: 20px;
-  padding-bottom: 20px;
 }
 
 .v-enter-active,
@@ -160,6 +148,6 @@ ipcRenderer.on('delete', (_, path) => {
 }
 
 .browser::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+  display: none;
 }
 </style>
