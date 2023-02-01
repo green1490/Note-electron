@@ -18,15 +18,15 @@ const collapse = () => {
 <template>
   <div class="container icon">
     <div>
-      <button @click="fileBrowser" class="btn btn-outline-dark">
-        <font-awesome-icon
-          class="fa"
-          icon="fa-solid fa-folder"/>
-      </button>
       <button class="btn btn-outline-dark" @click="collapse">
         <font-awesome-icon
           class="fa"
           icon="fa-solid fa-arrow-right-arrow-left"/>
+      </button>
+      <button @click="fileBrowser" class="btn btn-outline-dark">
+        <font-awesome-icon
+          class="fa"
+          icon="fa-solid fa-folder"/>
       </button>
     </div>
     <div>

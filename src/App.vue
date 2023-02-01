@@ -132,6 +132,12 @@ ipcRenderer.on('delete', (_, path) => {
   color: white;
   background-color: #131315;
 }
+
+.browser {
+  padding-top: 3rem;
+  padding-left: 1rem;
+}
+
 .browser {
   overflow-y: scroll;
   overflow-x: hidden;
