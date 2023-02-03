@@ -7,14 +7,24 @@ import { ipcRenderer, OpenDialogReturnValue } from 'electron'
 import Sidebar from './components/Sidebar.vue'
 import FileBrowser from './components/Filebrowser.vue'
 import Editor from './components/Editor.vue'
+import Dock from './components/Dock.vue'
+import Menu from './components/Menu.vue'
 
-const collapse = () => {
-  collapsed.value = !collapsed.value
-}
-
-const collapsed = ref(true)
+const current = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
+const opened = ref(true)
 const node = ref<TreeNode | undefined>(undefined)
 const path = ref<string | undefined>(undefined)
+
+const change = () => {
+  opened.value = !opened.value
+  if (opened.value === true) {
+    const openedSide = '"side browser menu"\n"side browser area"\n"dock dock dock"'
+    current.value = openedSide
+  } else {
+    const collapsedSide = '"side menu menu"\n"side area area"\n"dock dock dock"'
+    current.value = collapsedSide
+  }
+}
 
 const tree = (rootPath: string | undefined) => {
   if (rootPath === undefined) return undefined
@@ -99,33 +109,67 @@ ipcRenderer.on('delete', (_, path) => {
 </script>
 
 <template>
-  <div id="#app">
-    <div class="sidenav">
-      <Sidebar class="sidenav" @collapsed="collapse" @path-selected="newPath" />
+  <div id="#app"/>
+  <div class="cont">
+    <div class="sidebar">
+      <Sidebar @toggle="change" @path-selected="newPath" />
     </div>
-  </div>
-  <Transition>
-    <div v-show="collapsed" class="browser" >
+    <div v-show="opened" class="browser" >
       <FileBrowser v-if="node != undefined" :node="node"/>
     </div>
-  </Transition>
-  <Editor/>
+    <div class="editor">
+      <Editor/>
+    </div>
+    <div class="menu">
+      <Menu/>
+    </div>
+    <div class="dock">
+      <Dock/>
+    </div>
+  </div>
 </template>
 
 <style>
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  display: grid;
-  grid-template-columns: 50px 200px max-content;
   width: 100vw;
   height: 100vh;
 }
 
-.sidenav {
-  height: 100vh;
+.cont {
+  display: grid;
+  grid-template-columns: 50px 200px 1fr;
+  grid-template-rows: 0.1fr 3fr 0.1fr;
+  grid-template-areas: v-bind('current');
+}
+
+.cont {
+  width: 100%;
+  height: 100%;
+}
+
+.menu {
+  grid-area: menu;
+}
+
+.dock {
+  grid-area: dock;
+}
+
+.area {
+  grid-area: area;
+}
+
+.editor{
+  grid-area: area;
+}
+
+.sidebar {
   background-color: black;
+  grid-area: side;
 }
 
 .browser {
@@ -141,16 +185,7 @@ ipcRenderer.on('delete', (_, path) => {
 .browser {
   overflow-y: scroll;
   overflow-x: hidden;
-}
-
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
+  grid-area: browser;
 }
 
 .browser::-webkit-scrollbar {
