@@ -1,8 +1,11 @@
-import { app, BrowserWindow, shell, ipcMain, dialog, Menu } from "electron";
+import { app, BrowserWindow, shell, ipcMain, dialog, Menu, globalShortcut } from "electron";
+import { readFile, writeFile } from "fs";
 import { release } from "os";
 import { join } from "path";
 import { menu } from "../context-menu";
 
+let fileText:string
+let currentFile:string
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
 
@@ -68,7 +71,15 @@ async function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  globalShortcut.register('Control+S', () => {
+    writeFile(currentFile, fileText, err => {
+      if (err) {
+        console.log(err)
+      }
+    })
+  })
+}).then(createWindow);
 
 app.on("window-all-closed", () => {
   win = null;
@@ -115,9 +126,25 @@ ipcMain.handle("show-dialog", async () => {
   return selectedPath;
 });
 
+ipcMain.on('read-file', (_, path:string) => {
+    currentFile = path
+    readFile(path, 'utf8',(err, data) => {
+      if(err != null) {
+        win.webContents.send('read-file',null);
+      }
+      else {
+        win.webContents.send('read-file', data)
+      }
+  })
+})
+
 export let path: String;
 
-ipcMain.on("context-menu", (_, pathParameter) => {
+ipcMain.on('context-menu', (_, pathParameter) => {
   menu.popup();
   path = pathParameter;
 });
+
+ipcMain.on('text-change', (_,text:string) => {
+  fileText = text
+})

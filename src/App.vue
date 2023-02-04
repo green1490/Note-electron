@@ -10,6 +10,7 @@ import Editor from './components/Editor.vue'
 import Dock from './components/Dock.vue'
 import Menu from './components/Menu.vue'
 
+const fileData = ref<string>()
 const current = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
 const opened = ref(true)
 const node = ref<TreeNode | undefined>(undefined)
@@ -95,6 +96,11 @@ const newPath = (newPathValue: OpenDialogReturnValue) => {
   node.value = tree(path.value)
 }
 
+const updateEditor = (text:string) => {
+  fileData.value = text
+  ipcRenderer.send('text-change', text)
+}
+
 ipcRenderer.on('new-node', (_, path: string, nodeName: string) => {
   if (node.value !== undefined) {
     insertNode(node.value, path, nodeName)
@@ -106,6 +112,13 @@ ipcRenderer.on('delete', (_, path) => {
     removeNode(node.value, path)
   }
 })
+
+ipcRenderer.on('read-file', (_, data:string | null) => {
+  if (data != null) {
+    fileData.value = data
+  }
+})
+
 </script>
 
 <template>
@@ -118,7 +131,7 @@ ipcRenderer.on('delete', (_, path) => {
       <FileBrowser v-if="node != undefined" :node="node"/>
     </div>
     <div class="editor">
-      <Editor/>
+      <Editor @update="updateEditor" :file="fileData"/>
     </div>
     <div class="menu">
       <Menu/>

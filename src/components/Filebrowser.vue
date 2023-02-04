@@ -28,7 +28,7 @@
 import { computed, ref } from 'vue'
 import { TreeNode } from './class/TreeNode'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { statSync } from 'fs'
+import { stat, statSync } from 'fs'
 import { ipcRenderer } from 'electron'
 
 const hover = ref(false)
@@ -48,6 +48,13 @@ const contextMenu = () => {
 
 const clicked = () => {
   expanded.value = !expanded.value
+  if (props.node?.path !== undefined) {
+    stat(props.node.path, (error, stats) => {
+      if (error == null && stats.isFile() && props.node?.path !== undefined) {
+        ipcRenderer.send('read-file', props.node.path)
+      }
+    })
+  }
 }
 
 const directory = computed < Boolean | undefined >(() => {

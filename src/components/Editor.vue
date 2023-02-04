@@ -3,15 +3,21 @@
   <!-- textarea default behaviour  -->
   <textarea class="textarea"
   @keydown.tab.prevent = "insertTab($event)"
+  @input = "emit('update', ($event.target as HTMLInputElement).value)"
   spellcheck="false"
-  v-model="text"
-  />
+  :value="props.file"
+  >
+  </textarea>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 
-const text = ref('')
+const props = defineProps({
+  file: String
+})
+
+const emit = defineEmits(['update'])
+
 const insertTab = (event:any) => {
   const start = event.target.selectionStart
   const end = event.target.selectionEnd
