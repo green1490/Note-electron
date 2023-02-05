@@ -1,5 +1,12 @@
+<script setup lang="ts">
+const props = defineProps({
+  currentFile: String
+})
+</script>
+
 <template>
     <div class="menu">
+      {{ props.currentFile }}
     </div>
 </template>
 

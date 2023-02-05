@@ -5,7 +5,7 @@ import { join } from "path";
 import { menu } from "../context-menu";
 
 let fileText:string
-let currentFile:string
+let currentFilePath:string
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
 
@@ -73,7 +73,7 @@ async function createWindow() {
 
 app.whenReady().then(() => {
   globalShortcut.register('Control+S', () => {
-    writeFile(currentFile, fileText, err => {
+    writeFile(currentFilePath, fileText, err => {
       if (err) {
         console.log(err)
       }
@@ -126,14 +126,14 @@ ipcMain.handle("show-dialog", async () => {
   return selectedPath;
 });
 
-ipcMain.on('read-file', (_, path:string) => {
-    currentFile = path
+ipcMain.on('read-file', (_, path:string, fileName:string) => {
+    currentFilePath = path
     readFile(path, 'utf8',(err, data) => {
       if(err != null) {
         win.webContents.send('read-file',null);
       }
       else {
-        win.webContents.send('read-file', data)
+        win.webContents.send('read-file', data, fileName)
       }
   })
 })

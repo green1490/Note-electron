@@ -10,6 +10,7 @@ import Editor from './components/Editor.vue'
 import Dock from './components/Dock.vue'
 import Menu from './components/Menu.vue'
 
+const currentFileOpened = ref<string>()
 const fileData = ref<string>()
 const current = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
 const opened = ref(true)
@@ -113,9 +114,10 @@ ipcRenderer.on('delete', (_, path) => {
   }
 })
 
-ipcRenderer.on('read-file', (_, data:string | null) => {
+ipcRenderer.on('read-file', (event, data:string | null, filePath:string, fileName:string) => {
   if (data != null) {
     fileData.value = data
+    currentFileOpened.value = filePath
   }
 })
 
@@ -134,7 +136,7 @@ ipcRenderer.on('read-file', (_, data:string | null) => {
       <Editor @update="updateEditor" :file="fileData"/>
     </div>
     <div class="menu">
-      <Menu/>
+      <Menu :current-file="currentFileOpened"/>
     </div>
     <div class="dock">
       <Dock/>

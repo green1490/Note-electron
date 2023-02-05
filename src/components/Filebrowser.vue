@@ -51,7 +51,7 @@ const clicked = () => {
   if (props.node?.path !== undefined) {
     stat(props.node.path, (error, stats) => {
       if (error == null && stats.isFile() && props.node?.path !== undefined) {
-        ipcRenderer.send('read-file', props.node.path)
+        ipcRenderer.send('read-file', props.node.path, props.node.fileName())
       }
     })
   }
