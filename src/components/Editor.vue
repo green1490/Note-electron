@@ -1,13 +1,14 @@
 <template>
   <!-- Event modifier prevents the -->
   <!-- textarea default behaviour  -->
-  <textarea class="textarea"
-  @keydown.tab.prevent = "insertTab($event)"
-  @input = "emit('update', ($event.target as HTMLInputElement).value)"
-  spellcheck="false"
-  :value="props.file"
-  >
-  </textarea>
+  <div class="con">
+    <textarea class="textarea" v-if="props.file != undefined"
+    @keydown.tab.prevent = "insertTab($event)"
+    @input = "emit('update', ($event.target as HTMLInputElement).value)"
+    spellcheck="false"
+    :value="props.file"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -44,5 +45,11 @@ const insertTab = (event:any) => {
 .textarea {
   background-color: #1a1a1c;
   color: white;
+}
+
+.con {
+  background-color: #1a1a1c;
+  width: 100%;
+  height: 100%;
 }
 </style>

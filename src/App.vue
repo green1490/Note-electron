@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { readdirSync, statSync } from 'fs'
-import { sep, join } from 'path'
+import { sep, join, extname, basename } from 'path'
 import { TreeNode } from './components/class/TreeNode'
 import { ref } from 'vue'
 import { ipcRenderer, OpenDialogReturnValue } from 'electron'
@@ -10,21 +10,23 @@ import Editor from './components/Editor.vue'
 import Dock from './components/Dock.vue'
 import Menu from './components/Menu.vue'
 
-const currentFileOpened = ref<string>()
-const fileData = ref<string>()
-const current = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
-const opened = ref(true)
+const currentFileName = ref<string>()
+const currentFileContent = ref<string>()
+const currentLayout = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
+const sidepanelOpened = ref(true)
+// root dir's content and sub contents
 const node = ref<TreeNode | undefined>(undefined)
+// root path of the dir
 const path = ref<string | undefined>(undefined)
 
 const change = () => {
-  opened.value = !opened.value
-  if (opened.value === true) {
+  sidepanelOpened.value = !sidepanelOpened.value
+  if (sidepanelOpened.value === true) {
     const openedSide = '"side browser menu"\n"side browser area"\n"dock dock dock"'
-    current.value = openedSide
+    currentLayout.value = openedSide
   } else {
     const collapsedSide = '"side menu menu"\n"side area area"\n"dock dock dock"'
-    current.value = collapsedSide
+    currentLayout.value = collapsedSide
   }
 }
 
@@ -39,7 +41,11 @@ const tree = (rootPath: string | undefined) => {
       if (currentNode !== undefined) {
         try {
           const children = readdirSync(currentNode.path)
-          for (const child of children) {
+          const filteredFile = children.filter((element, index, array) => {
+            return ((extname(element) === '.md' || extname(element) === '') && element.charAt(0) !== '.')
+          })
+
+          for (const child of filteredFile) {
             const childPath = join(currentNode.path, sep, child)
             const childNode = new TreeNode(childPath)
             currentNode.children.push(childNode)
@@ -98,26 +104,33 @@ const newPath = (newPathValue: OpenDialogReturnValue) => {
 }
 
 const updateEditor = (text:string) => {
-  fileData.value = text
+  currentFileContent.value = text
   ipcRenderer.send('text-change', text)
 }
 
-ipcRenderer.on('new-node', (_, path: string, nodeName: string) => {
+ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
   if (node.value !== undefined) {
     insertNode(node.value, path, nodeName)
   }
 })
 
-ipcRenderer.on('delete', (_, path) => {
-  if (node.value !== undefined) {
+ipcRenderer.on('delete', (event, path:string) => {
+  if (currentFileName.value === basename(path)) {
+    currentFileContent.value = undefined
+    currentFileName.value = undefined
+  }
+})
+
+ipcRenderer.on('delete', (event, path:string) => {
+  if (node.value) {
     removeNode(node.value, path)
   }
 })
 
 ipcRenderer.on('read-file', (event, data:string | null, filePath:string, fileName:string) => {
   if (data != null) {
-    fileData.value = data
-    currentFileOpened.value = filePath
+    currentFileContent.value = data
+    currentFileName.value = filePath
   }
 })
 
@@ -129,14 +142,14 @@ ipcRenderer.on('read-file', (event, data:string | null, filePath:string, fileNam
     <div class="sidebar">
       <Sidebar @toggle="change" @path-selected="newPath" />
     </div>
-    <div v-show="opened" class="browser" >
+    <div v-show="sidepanelOpened" class="browser" >
       <FileBrowser v-if="node != undefined" :node="node"/>
     </div>
     <div class="editor">
-      <Editor @update="updateEditor" :file="fileData"/>
+      <Editor @update="updateEditor" :file="currentFileContent"/>
     </div>
     <div class="menu">
-      <Menu :current-file="currentFileOpened"/>
+      <Menu :current-file ="currentFileName"/>
     </div>
     <div class="dock">
       <Dock/>
@@ -150,6 +163,7 @@ ipcRenderer.on('read-file', (event, data:string | null, filePath:string, fileNam
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: medium;
   width: 100vw;
   height: 100vh;
 }
@@ -157,8 +171,8 @@ ipcRenderer.on('read-file', (event, data:string | null, filePath:string, fileNam
 .cont {
   display: grid;
   grid-template-columns: 50px 200px 1fr;
-  grid-template-rows: 0.1fr 3fr 0.1fr;
-  grid-template-areas: v-bind('current');
+  grid-template-rows: 0.2fr 3fr 0.1fr;
+  grid-template-areas: v-bind('currentLayout');
 }
 
 .cont {

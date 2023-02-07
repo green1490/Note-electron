@@ -20,18 +20,18 @@ const collapse = () => {
     <div>
       <button class="btn btn-outline-dark" @click="collapse">
         <font-awesome-icon
-          class="fa"
+          class="fa fa-lg"
           icon="fa-solid fa-arrow-right-arrow-left"/>
       </button>
       <button @click="fileBrowser" class="btn btn-outline-dark">
         <font-awesome-icon
-          class="fa"
+          class="fa fa-lg"
           icon="fa-solid fa-folder"/>
       </button>
     </div>
     <div>
       <button class="btn btn-outline-dark">
-        <font-awesome-icon class="fa" icon="fa-solid fa-gear" />
+        <font-awesome-icon class="fa fa-lg" icon="fa-solid fa-gear" />
       </button>
     </div>
   </div>

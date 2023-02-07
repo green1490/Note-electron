@@ -9,8 +9,8 @@
     :class="{ 'node-hover': hover }"
   >
     <span v-if="directory && directory != undefined">
-      <font-awesome-icon v-if="expanded" icon="fa-solid fa-folder-open" />
-      <font-awesome-icon v-else icon="fa-solid fa-folder" />
+      <font-awesome-icon v-if="expanded" icon="fa-solid fa-folder-open fa-lg" />
+      <font-awesome-icon v-else icon="fa-solid fa-folder fa-lg" />
     </span>
     {{ node?.stem() }}
   </div>
