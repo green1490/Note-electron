@@ -14,12 +14,12 @@
     "node": "14.18.0 || >=16.0.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.50.0",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@vitejs/plugin-vue": "^3.0.1",
     "electron": "^22.0.0",
     "electron-builder": "^22.10.3",
     "eslint": "^8.33.0",
-    "eslint-config-standard-with-typescript": "^33.0.0",
+    "eslint-config-standard-with-typescript": "^34.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.1",
     "eslint-plugin-promise": "^6.1.1",

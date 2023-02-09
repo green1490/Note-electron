@@ -136,9 +136,16 @@ ipcMain.on('read-file', (_, path:string, fileName:string) => {
         win.webContents.send('read-file',null);
       }
       else {
-        win.webContents.send('read-file', data, fileName)
+        win.webContents.send('read-file', data, fileName, path)
       }
   })
+})
+
+ipcMain.on('change-file', (event, path:string, fileName:string ,text:string) => {
+  currentFilePath = path
+  currentFileContent = text
+
+  win.webContents.send('change-file', path, fileName, text)
 })
 
 export let path: String;

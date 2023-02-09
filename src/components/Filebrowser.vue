@@ -48,10 +48,23 @@ const contextMenu = () => {
 
 const clicked = () => {
   expanded.value = !expanded.value
-  if (props.node?.path !== undefined) {
+  if (props.node?.path) {
     stat(props.node.path, (error, stats) => {
-      if (error == null && stats.isFile() && props.node?.path !== undefined) {
-        ipcRenderer.send('read-file', props.node.path, props.node.fileName())
+      if (error == null && stats.isFile() && props.node?.path) {
+        if (props.node.content === undefined) {
+          ipcRenderer.send(
+            'read-file',
+            props.node.path,
+            props.node.fileName()
+          )
+        } else {
+          ipcRenderer.send(
+            'change-file',
+            props.node.path,
+            props.node.fileName(),
+            props.node.content
+          )
+        }
       }
     })
   }

@@ -10,6 +10,7 @@ import Editor from './components/Editor.vue'
 import Dock from './components/Dock.vue'
 import Menu from './components/Menu.vue'
 
+const currentNode = ref<TreeNode>()
 const currentFileName = ref<string>()
 const currentFileContent = ref<string>()
 const currentLayout = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
@@ -37,18 +38,18 @@ const tree = (rootPath: string | undefined) => {
     const stack = [root]
 
     while (stack.length) {
-      const currentNode = stack.pop()
-      if (currentNode !== undefined) {
+      const node = stack.pop()
+      if (node !== undefined) {
         try {
-          const children = readdirSync(currentNode.path)
+          const children = readdirSync(node.path)
           const filteredFile = children.filter((element, index, array) => {
             return ((extname(element) === '.md' || extname(element) === '') && element.charAt(0) !== '.')
           })
 
           for (const child of filteredFile) {
-            const childPath = join(currentNode.path, sep, child)
+            const childPath = join(node.path, sep, child)
             const childNode = new TreeNode(childPath)
-            currentNode.children.push(childNode)
+            node.children.push(childNode)
 
             try {
               if (statSync(childNode.path).isDirectory()) {
@@ -62,11 +63,39 @@ const tree = (rootPath: string | undefined) => {
           console.warn(`Cant acces the directory: ${error}`)
         }
       } else {
-        return currentNode
+        return node
       }
     }
     return root
   }
+}
+
+const instertConent = (tree: TreeNode, path: string, content:string) => {
+  if (tree.path === path) {
+    tree.content = content
+  } else {
+    tree.children.forEach((node) => {
+      instertConent(node, path, content)
+    })
+  }
+}
+
+const getNode = (tree: TreeNode, path:string) => {
+  const queue:TreeNode[] = []
+  tree.children.forEach((node) => {
+    queue.push(node)
+  })
+
+  for (const node of queue) {
+    if (node.path === path) {
+      return node
+    }
+    node.children.forEach((node) => {
+      queue.push(node)
+    })
+  }
+
+  return undefined
 }
 
 const insertNode = (tree: TreeNode, path: string, nodeName: string) => {
@@ -105,6 +134,9 @@ const newPath = (newPathValue: OpenDialogReturnValue) => {
 
 const updateEditor = (text:string) => {
   currentFileContent.value = text
+  if (currentNode.value) {
+    currentNode.value.content = text
+  }
   ipcRenderer.send('text-change', text)
 }
 
@@ -127,10 +159,19 @@ ipcRenderer.on('delete', (event, path:string) => {
   }
 })
 
-ipcRenderer.on('read-file', (event, data:string | null, filePath:string, fileName:string) => {
-  if (data != null) {
+ipcRenderer.on('read-file', (event, data:string | null, fileName:string, path:string) => {
+  if (data != null && node.value) {
+    instertConent(node.value, path, data)
     currentFileContent.value = data
-    currentFileName.value = filePath
+    currentFileName.value = fileName
+  }
+})
+
+ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string) => {
+  if (node.value) {
+    currentNode.value = getNode(node.value, path)
+    currentFileName.value = fileName
+    currentFileContent.value = text
   }
 })
 
