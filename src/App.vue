@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { readdirSync, statSync } from 'fs'
-import { sep, join, extname, basename } from 'path'
+import { sep, join, extname } from 'path'
 import { TreeNode } from './components/class/TreeNode'
 import { ref } from 'vue'
 import { ipcRenderer, OpenDialogReturnValue } from 'electron'
@@ -11,8 +11,6 @@ import Dock from './components/Dock.vue'
 import Menu from './components/Menu.vue'
 
 const currentNode = ref<TreeNode>()
-const currentFileName = ref<string>()
-const currentFileContent = ref<string>()
 const currentLayout = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
 const sidepanelOpened = ref(true)
 // root dir's content and sub contents
@@ -69,17 +67,6 @@ const tree = (rootPath: string | undefined) => {
     return root
   }
 }
-
-const instertConent = (tree: TreeNode, path: string, content:string) => {
-  if (tree.path === path) {
-    tree.content = content
-  } else {
-    tree.children.forEach((node) => {
-      instertConent(node, path, content)
-    })
-  }
-}
-
 const getNode = (tree: TreeNode, path:string) => {
   const queue:TreeNode[] = []
   tree.children.forEach((node) => {
@@ -96,6 +83,14 @@ const getNode = (tree: TreeNode, path:string) => {
   }
 
   return undefined
+}
+
+const instertConent = (tree: TreeNode, path: string, content:string) => {
+  const node = getNode(tree, path)
+  if (node) {
+    node.content = content
+  }
+  return node
 }
 
 const insertNode = (tree: TreeNode, path: string, nodeName: string) => {
@@ -133,11 +128,15 @@ const newPath = (newPathValue: OpenDialogReturnValue) => {
 }
 
 const updateEditor = (text:string) => {
-  currentFileContent.value = text
   if (currentNode.value) {
-    currentNode.value.content = text
+    if (currentNode.value?.content === undefined) {
+      currentNode.value.content = ''
+      ipcRenderer.send('text-change', '')
+    } else {
+      currentNode.value.content = text
+      ipcRenderer.send('text-change', text)
+    }
   }
-  ipcRenderer.send('text-change', text)
 }
 
 ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
@@ -146,11 +145,9 @@ ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
   }
 })
 
+// delete whole if and testing
 ipcRenderer.on('delete', (event, path:string) => {
-  if (currentFileName.value === basename(path)) {
-    currentFileContent.value = undefined
-    currentFileName.value = undefined
-  }
+  currentNode.value = undefined
 })
 
 ipcRenderer.on('delete', (event, path:string) => {
@@ -161,17 +158,20 @@ ipcRenderer.on('delete', (event, path:string) => {
 
 ipcRenderer.on('read-file', (event, data:string | null, fileName:string, path:string) => {
   if (data != null && node.value) {
-    instertConent(node.value, path, data)
-    currentFileContent.value = data
-    currentFileName.value = fileName
+    currentNode.value = instertConent(node.value, path, data)
+    if (currentNode.value?.content && currentNode.value.path) {
+      currentNode.value.content = data
+      currentNode.value.path = path
+    }
   }
 })
 
 ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string) => {
   if (node.value) {
     currentNode.value = getNode(node.value, path)
-    currentFileName.value = fileName
-    currentFileContent.value = text
+    if (currentNode.value?.content) {
+      currentNode.value.content = text
+    }
   }
 })
 
@@ -187,10 +187,10 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
       <FileBrowser v-if="node != undefined" :node="node"/>
     </div>
     <div class="editor">
-      <Editor @update="updateEditor" :file="currentFileContent"/>
+      <Editor @update="updateEditor" :file="currentNode?.content"/>
     </div>
     <div class="menu">
-      <Menu :current-file ="currentFileName"/>
+      <Menu :current-file ="currentNode?.fileName()"/>
     </div>
     <div class="dock">
       <Dock/>

@@ -12,11 +12,11 @@ export class TreeNode {
   }
 
   //file name without the extension
-  stem(): String {
-    return this.path.split(sep).at(-1)?.split(".").at(0) as String
+  stem(): string {
+    return this.path.split(sep).at(-1)?.split(".").at(0) as string
   }
 
-  fileName(): String {
+  fileName(): string {
     return basename(this.path)
   }
 }
