@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, ipcMain, dialog, Menu, globalShortcut } from "electron";
+import { app, BrowserWindow, shell, ipcMain, dialog, globalShortcut } from "electron";
 import { readFile, writeFile } from "fs";
 import { release } from "os";
 import { join } from "path";
@@ -150,7 +150,12 @@ ipcMain.on('change-file', (event, path:string, fileName:string ,text:string) => 
 
 export let path: String;
 
-ipcMain.on('context-menu', (_, pathParameter) => {
+ipcMain.on('context-menu', (_, pathParameter, rootPath:string) => {
+  if(pathParameter === rootPath) {
+    menu.items.at(-1).enabled = false
+  } else {
+    menu.items.at(-1).enabled = true
+  }
   menu.popup();
   path = pathParameter;
 });

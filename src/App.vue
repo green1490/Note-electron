@@ -184,7 +184,7 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
       <Sidebar @toggle="change" @path-selected="newPath" />
     </div>
     <div v-show="sidepanelOpened" class="browser" >
-      <FileBrowser v-if="node != undefined" :node="node"/>
+      <FileBrowser v-if="node != undefined" :node="node" :root="path"/>
     </div>
     <div class="editor">
       <Editor @update="updateEditor" :file="currentNode?.content"/>

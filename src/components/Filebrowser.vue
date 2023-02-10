@@ -36,6 +36,7 @@ const expanded = ref(false)
 
 const props = defineProps({
   node: TreeNode,
+  root: String,
   depth: {
     type: Number,
     default: 0
@@ -43,7 +44,7 @@ const props = defineProps({
 })
 
 const contextMenu = () => {
-  ipcRenderer.send('context-menu', props.node?.path)
+  ipcRenderer.send('context-menu', props.node?.path, props.root)
 }
 
 const clicked = () => {
