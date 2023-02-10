@@ -146,7 +146,7 @@ ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
 })
 
 // delete whole if and testing
-ipcRenderer.on('delete', (event, path:string) => {
+ipcRenderer.on('delete', () => {
   currentNode.value = undefined
 })
 
@@ -212,7 +212,7 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
 .cont {
   display: grid;
   grid-template-columns: 50px 200px 1fr;
-  grid-template-rows: 0.2fr 3fr 0.1fr;
+  grid-template-rows: 25px 1fr 25px;
   grid-template-areas: v-bind('currentLayout');
 }
 

@@ -71,18 +71,7 @@ async function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
-  globalShortcut.register('Control+S', () => {
-    if(currentFilePath && currentFileContent) {
-      writeFile(currentFilePath, currentFileContent, err => {
-        if (err) {
-          console.log(err)
-        }
-      })
-    }
-   }
-  )
-}).then(createWindow);
+app.whenReady().then().then(createWindow);
 
 app.on("window-all-closed", () => {
   win = null;
@@ -105,6 +94,23 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+app.on('browser-window-focus', () => {
+  globalShortcut.register('Control+S', () => {
+    if(currentFilePath && currentFileContent) {
+      writeFile(currentFilePath, currentFileContent, err => {
+        if (err) {
+          console.log(err)
+        }
+      })
+    }
+   }
+  )
+})
+
+app.on('browser-window-blur', () => {
+  globalShortcut.unregister('Control+S')
+})
 
 // new window example arg: new windows url
 ipcMain.handle("open-win", (event, arg) => {
