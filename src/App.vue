@@ -2,13 +2,20 @@
 import { readdirSync, statSync } from 'fs'
 import { sep, join, extname } from 'path'
 import { TreeNode } from './components/class/TreeNode'
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import { ipcRenderer, OpenDialogReturnValue } from 'electron'
 import Sidebar from './components/Sidebar.vue'
 import FileBrowser from './components/Filebrowser.vue'
 import Editor from './components/Editor.vue'
 import Dock from './components/Dock.vue'
 import Menu from './components/Menu.vue'
+import { PockatController } from './components/lib/pocketBase'
+import PocketBase from 'pocketbase'
+
+onBeforeMount(async () => {
+  const pbc = new PockatController(new PocketBase(import.meta.env.VITE_IP))
+  pbc.sync()
+})
 
 const currentNode = ref<TreeNode>()
 const currentLayout = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')

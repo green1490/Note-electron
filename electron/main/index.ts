@@ -1,11 +1,15 @@
 import { app, BrowserWindow, shell, ipcMain, dialog, globalShortcut } from "electron";
-import { readFile, writeFile } from "fs";
+import { readFile, writeFile, mkdir } from "fs";
 import { release } from "os";
-import { join } from "path";
+import { basename, join, sep } from "path";
 import { menu } from "../context-menu";
+import { dirReader } from '../dirReader'
+import { readdir } from "fs/promises";
 
 let currentFileContent:string
 let currentFilePath:string
+let currentPath:string[]
+
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
 
@@ -132,6 +136,7 @@ ipcMain.handle("show-dialog", async () => {
   let selectedPath = await dialog.showOpenDialog(win, {
     properties: ["openDirectory"],
   });
+  currentPath = selectedPath.filePaths
   return selectedPath;
 });
 
@@ -168,4 +173,46 @@ ipcMain.on('context-menu', (_, pathParameter, rootPath:string) => {
 
 ipcMain.on('text-change', (_,text:string) => {
   currentFileContent = text
+})
+
+ipcMain.on('sync', (event, directories:any[],files:any[]) => {
+  const syncPath = "/Users/zambo/Desktop"
+  directories.forEach((dir) => {
+    const dirPath = join(syncPath,sep,dir.path)
+
+    mkdir(dirPath, {recursive:true} ,(err) => {
+      if (err) {
+        console.log(err)
+      }
+    })
+    files.forEach((file) => {
+      const fileReferences:string[] = dir.file
+      if(fileReferences.includes(file.id)) {
+        const filePath = join(dirPath,sep,file.name+'.md')
+        writeFile(filePath,file.content, err => {
+          if (err) {
+            console.log(err)
+          }
+        })
+      }
+    })
+  })
+})
+
+ipcMain.on('sync',async () => {
+  const testPath:string = ""
+  const baseName = basename(testPath)
+  const result = await dirReader(testPath)
+  const folderWithContents:{dir:string, files:string[]}[] = []
+  
+  for (let path of result) {
+    const files = await readdir(path)
+    const index = path.indexOf(baseName)
+    const sanitizedPath = path.substring(index)
+    folderWithContents.push({
+        dir:sanitizedPath,
+        files:files
+      })
+    }
+    console.log(folderWithContents)
 })

@@ -23,6 +23,4 @@ dist-ssr
 
 release
 .vscode/.debug.env
-
-# Firestore token
-src/firestore
+.env

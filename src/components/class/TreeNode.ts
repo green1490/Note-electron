@@ -5,9 +5,9 @@ export class TreeNode {
   children: Array<TreeNode>
   content: string | undefined
 
-  constructor(path: string) {
+  constructor(path: string, childs:TreeNode[] = []) {
     this.path = path
-    this.children = []
+    this.children = childs
     this.content = undefined
   }
 
@@ -18,5 +18,15 @@ export class TreeNode {
 
   fileName(): string {
     return basename(this.path)
+  }
+
+  node(path:string,node:TreeNode):TreeNode | undefined {
+    if (node.path == path) {
+      return node
+    } else {
+      node.children.forEach((node) => {
+        this.node(path,node)
+      })
+    }
   }
 }
