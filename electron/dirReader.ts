@@ -1,18 +1,6 @@
 import { readdir, stat } from 'fs/promises'
 import { sep, join } from 'path'
 
-// export const dirReader = async (path:string, dirs:string[]) => {
-//     const stats = await stat(path)
-//     if (stats.isDirectory()) {
-//         dirs.push(path)
-//         const files = await readdir(path)
-//         files.forEach( async (file) => {
-//             const joinedPath = join(path,sep,file)
-//             const result = dirReader(joinedPath,dirs)
-//         })
-//     }
-// }
-
 export const dirReader = async (path:string) => {
     const childFiles = await readdir(path)
     const dirs:string[] = [path]

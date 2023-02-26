@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ipcRenderer, OpenDialogReturnValue } from 'electron'
 
-const emit = defineEmits(['path-selected', 'toggle'])
+const emit = defineEmits(['path-selected', 'toggle', 'sync-path'])
 
 const fileBrowser = async () => {
   const path: OpenDialogReturnValue = await ipcRenderer.invoke(
@@ -12,6 +12,10 @@ const fileBrowser = async () => {
 }
 const collapse = () => {
   emit('toggle')
+}
+
+const sync = () => {
+  emit('sync-path')
 }
 </script>
 
@@ -28,10 +32,17 @@ const collapse = () => {
           class="fa fa-lg"
           icon="fa-solid fa-folder"/>
       </button>
+      <button @click="sync" class="btn btn-outline-dark">
+        <font-awesome-icon
+          class="fa fa-lg"
+          icon="fa-solid fa-sync" />
+      </button>
     </div>
     <div>
       <button class="btn btn-outline-dark">
-        <font-awesome-icon class="fa fa-lg" icon="fa-solid fa-gear" />
+        <font-awesome-icon
+          class="fa fa-lg"
+          icon="fa-solid fa-gear" />
       </button>
     </div>
   </div>

@@ -6,10 +6,11 @@ import {
   faFolder,
   faGear,
   faFolderOpen,
+  faSync
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faArrowRightArrowLeft, faFolder, faGear, faFolderOpen);
+library.add(faArrowRightArrowLeft, faFolder, faGear, faFolderOpen,faSync);
 
 createApp(App)
   .component("font-awesome-icon", FontAwesomeIcon)

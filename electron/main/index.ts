@@ -1,14 +1,16 @@
 import { app, BrowserWindow, shell, ipcMain, dialog, globalShortcut } from "electron";
-import { readFile, writeFile, mkdir } from "fs";
+import { writeFile, mkdir } from "fs";
 import { release } from "os";
-import { basename, join, sep } from "path";
+import { basename, join, parse, sep } from "path";
 import { menu } from "../context-menu";
 import { dirReader } from '../dirReader'
-import { readdir } from "fs/promises";
+import { readdir, stat, readFile } from "fs/promises";
+import Store from 'electron-store';
 
+const store = new Store()
 let currentFileContent:string
 let currentFilePath:string
-let currentPath:string[]
+let syncPath:any = store.get('syncPath')
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
@@ -136,20 +138,13 @@ ipcMain.handle("show-dialog", async () => {
   let selectedPath = await dialog.showOpenDialog(win, {
     properties: ["openDirectory"],
   });
-  currentPath = selectedPath.filePaths
   return selectedPath;
 });
 
-ipcMain.on('read-file', (_, path:string, fileName:string) => {
+ipcMain.on('read-file', async (_, path:string, fileName:string) => {
     currentFilePath = path
-    readFile(path, 'utf8',(err, data) => {
-      if(err != null) {
-        win.webContents.send('read-file',null);
-      }
-      else {
-        win.webContents.send('read-file', data, fileName, path)
-      }
-  })
+    const content = await readFile(path, {encoding:'utf-8'})
+    win.webContents.send('read-file', content, fileName, path)
 })
 
 ipcMain.on('change-file', (event, path:string, fileName:string ,text:string) => {
@@ -175,44 +170,70 @@ ipcMain.on('text-change', (_,text:string) => {
   currentFileContent = text
 })
 
-ipcMain.on('sync', (event, directories:any[],files:any[]) => {
-  const syncPath = "/Users/zambo/Desktop"
-  directories.forEach((dir) => {
-    const dirPath = join(syncPath,sep,dir.path)
+ipcMain.on('sync-path', async () => {
+  let selectedPath = await dialog.showOpenDialog(win, {
+    properties: ["openDirectory"],
+  });
+  if (selectedPath.filePaths.length != 0) {
+    store.set('syncPath',selectedPath.filePaths.at(0))
+  }
+}) 
 
-    mkdir(dirPath, {recursive:true} ,(err) => {
-      if (err) {
-        console.log(err)
-      }
-    })
-    files.forEach((file) => {
-      const fileReferences:string[] = dir.file
-      if(fileReferences.includes(file.id)) {
-        const filePath = join(dirPath,sep,file.name+'.md')
-        writeFile(filePath,file.content, err => {
-          if (err) {
-            console.log(err)
-          }
-        })
-      }
-    })
-  })
-})
+// ipcMain.handle('sync', (event, directories:any[],files:any[]) => {
+//   directories.forEach((dir) => {
+//     const dirPath = join(syncPath,sep,dir.path)
 
-ipcMain.on('sync',async () => {
-  const testPath:string = ""
-  const baseName = basename(testPath)
-  const result = await dirReader(testPath)
-  const folderWithContents:{dir:string, files:string[]}[] = []
-  
-  for (let path of result) {
-    const files = await readdir(path)
-    const index = path.indexOf(baseName)
-    const sanitizedPath = path.substring(index)
-    folderWithContents.push({
-        dir:sanitizedPath,
-        files:files
+//     mkdir(dirPath, {recursive:true} ,(err) => {
+//       if (err) {
+//         console.log(err)
+//       }
+//     })
+//     files.forEach((file) => {
+//       const fileReferences:string[] = dir.file
+//       if(fileReferences.includes(file.id)) {
+//         const filePath = join(dirPath,sep,file.name+'.md')
+//         writeFile(filePath,file.content, err => {
+//           if (err) {
+//             console.log(err)
+//           }
+//         })
+//       }
+//     })
+//   })
+//   return false
+// })
+
+ipcMain.handle('sync',async () => {
+  if (syncPath) {
+    const baseName = basename(syncPath)
+    const result = await dirReader(syncPath)
+    const folderWithContents:{dir:string, files:{name:string,content:string}[]}[] = []
+    let files:{name:string,content:string}[] = []
+    
+    for (let path of result) {
+      files = []
+      const filesWithDir = await readdir(path)
+      for (let item of filesWithDir) {
+        const stats = await stat(join(path,sep,item))
+        if (stats.isFile()) {
+          const content = await readFile(join(path,sep,item), {encoding:'utf-8'})
+          const fileName = parse(item).name
+          files.push({
+            name:fileName,
+            content:content
+          })
+        }
+      }
+
+      const index = path.indexOf(baseName)
+      const sanitizedPath = path.substring(index)
+      folderWithContents.push({
+          dir:sanitizedPath,
+          files:files
       })
     }
-    console.log(folderWithContents)
+    return folderWithContents
+  } else {
+    return undefined
+  }
 })

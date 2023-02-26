@@ -146,6 +146,10 @@ const updateEditor = (text:string) => {
   }
 }
 
+const sync = () => {
+  ipcRenderer.send('sync-path')
+}
+
 ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
   if (node.value !== undefined) {
     insertNode(node.value, path, nodeName)
@@ -181,14 +185,13 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
     }
   }
 })
-
 </script>
 
 <template>
   <div id="#app"/>
   <div class="cont">
     <div class="sidebar">
-      <Sidebar @toggle="change" @path-selected="newPath" />
+      <Sidebar @toggle="change" @path-selected="newPath" @sync-path="sync" />
     </div>
     <div v-show="sidepanelOpened" class="browser" >
       <FileBrowser v-if="node != undefined" :node="node" :root="path"/>
