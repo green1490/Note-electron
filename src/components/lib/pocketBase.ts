@@ -14,13 +14,16 @@ export class PockatController {
             await this.pb.collection('directory').getFullList(),
             await this.pb.collection('file').getFullList()
         )
-        if (syncDir) {
+        if (syncDir != undefined) {
             for (let dir of syncDir) {
                 const resultList = await this.pb.collection('directory').getFullList(undefined , {
                     filter: `path = "${dir.dir}"`,
                 });
                 if (resultList.length) {
-                    
+                    for (let file of dir.files) {
+                        const record = await this.pb.collection('file').getFirstListItem(`name="${file.name}"`)
+                        this.pb.collection('file').update(record.id,{'content':file.content})
+                    }
                 } else {
                     const fileIDs:string[] = []
                     const dirRecord = await this.pb.collection('directory').create({'path':dir.dir, 'file': []})

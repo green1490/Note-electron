@@ -1,5 +1,5 @@
 import { app, BrowserWindow, shell, ipcMain, dialog, globalShortcut } from "electron";
-import { writeFile, mkdir } from "fs";
+import { writeFile, mkdir, existsSync } from "fs";
 import { release } from "os";
 import { basename, join, parse, sep } from "path";
 import { menu } from "../context-menu";
@@ -179,32 +179,8 @@ ipcMain.on('sync-path', async () => {
   }
 }) 
 
-// ipcMain.handle('sync', (event, directories:any[],files:any[]) => {
-//   directories.forEach((dir) => {
-//     const dirPath = join(syncPath,sep,dir.path)
-
-//     mkdir(dirPath, {recursive:true} ,(err) => {
-//       if (err) {
-//         console.log(err)
-//       }
-//     })
-//     files.forEach((file) => {
-//       const fileReferences:string[] = dir.file
-//       if(fileReferences.includes(file.id)) {
-//         const filePath = join(dirPath,sep,file.name+'.md')
-//         writeFile(filePath,file.content, err => {
-//           if (err) {
-//             console.log(err)
-//           }
-//         })
-//       }
-//     })
-//   })
-//   return false
-// })
-
-ipcMain.handle('sync',async () => {
-  if (syncPath) {
+ipcMain.handle('sync',async (event, directories:any[],dbFiles:any[] ) => {
+  if (syncPath && existsSync(syncPath)) {
     const baseName = basename(syncPath)
     const result = await dirReader(syncPath)
     const folderWithContents:{dir:string, files:{name:string,content:string}[]}[] = []
@@ -232,6 +208,27 @@ ipcMain.handle('sync',async () => {
           files:files
       })
     }
+
+    directories.forEach((dir) => {
+      const syncPathRemoved:string = dir.path.replace(baseName,'')
+      const dirPath = join(syncPath,syncPathRemoved)
+      mkdir(dirPath, {recursive:true} ,(err) => {
+        if (err) {
+          console.log(err)
+        }
+      })
+      dbFiles.forEach((file) => {
+        const fileReferences:string[] = dir.file
+        if(fileReferences.includes(file.id)) {
+          const filePath = join(dirPath,sep,file.name+'.md')
+          writeFile(filePath,file.content, err => {
+            if (err) {
+              console.log(err)
+            }
+          })
+        }
+      })
+    })
     return folderWithContents
   } else {
     return undefined
