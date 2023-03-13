@@ -2,7 +2,7 @@
 import { readdirSync, statSync } from 'fs'
 import { sep, join, extname } from 'path'
 import { TreeNode } from './components/class/TreeNode'
-import { ref, onBeforeMount } from 'vue'
+import { ref } from 'vue'
 import { ipcRenderer, OpenDialogReturnValue } from 'electron'
 import Sidebar from './components/Sidebar.vue'
 import FileBrowser from './components/Filebrowser.vue'
@@ -11,12 +11,14 @@ import Dock from './components/Dock.vue'
 import Menu from './components/Menu.vue'
 import { PockatController } from './components/lib/pocketBase'
 import PocketBase from 'pocketbase'
+import { marked } from 'marked'
 
-onBeforeMount(async () => {
-  const pbc = new PockatController(new PocketBase(import.meta.env.VITE_IP))
-  pbc.sync()
-})
+const pbc = new PockatController(new PocketBase(import.meta.env.VITE_IP))
+pbc.sync()
 
+const isClosed = ref<boolean>(true)
+const isInMarkdownMode = ref<boolean>(false)
+const currentContent = ref<any>()
 const currentNode = ref<TreeNode>()
 const currentLayout = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
 const sidepanelOpened = ref(true)
@@ -150,15 +152,31 @@ const sync = () => {
   ipcRenderer.send('sync-path')
 }
 
+const replaceEditor = () => {
+  isInMarkdownMode.value = !isInMarkdownMode.value
+
+  if (isInMarkdownMode.value) {
+    if (currentNode.value?.content) {
+      currentContent.value = marked.parse(currentNode.value.content)
+    }
+  } else {
+    currentContent.value = currentNode.value?.content
+  }
+}
+
+const closeFile = () => {
+  isClosed.value = true
+}
+
 ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
   if (node.value !== undefined) {
     insertNode(node.value, path, nodeName)
   }
 })
 
-// delete whole if and testing
 ipcRenderer.on('delete', () => {
   currentNode.value = undefined
+  isClosed.value = true
 })
 
 ipcRenderer.on('delete', (event, path:string) => {
@@ -169,6 +187,7 @@ ipcRenderer.on('delete', (event, path:string) => {
 
 ipcRenderer.on('read-file', (event, data:string | null, fileName:string, path:string) => {
   if (data != null && node.value) {
+    isClosed.value = false
     currentNode.value = instertConent(node.value, path, data)
     if (currentNode.value?.content && currentNode.value.path) {
       currentNode.value.content = data
@@ -179,6 +198,7 @@ ipcRenderer.on('read-file', (event, data:string | null, fileName:string, path:st
 
 ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string) => {
   if (node.value) {
+    isClosed.value = false
     currentNode.value = getNode(node.value, path)
     if (currentNode.value?.content) {
       currentNode.value.content = text
@@ -197,10 +217,10 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
       <FileBrowser v-if="node != undefined" :node="node" :root="path"/>
     </div>
     <div class="editor">
-      <Editor @update="updateEditor" :file="currentNode?.content"/>
+      <Editor :closed="isClosed" @update="updateEditor" :mode="isInMarkdownMode" :file="(currentContent == undefined) ? currentNode?.content : currentContent "/>
     </div>
     <div class="menu">
-      <Menu :current-file ="currentNode?.fileName()"/>
+      <Menu :closed="isClosed" @close="closeFile" :mark-down="isInMarkdownMode" @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
     </div>
     <div class="dock">
       <Dock/>
@@ -217,12 +237,13 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
   font-size: medium;
   width: 100vw;
   height: 100vh;
+  background-color: #1a1a1c;
 }
 
 .cont {
   display: grid;
   grid-template-columns: 50px 200px 1fr;
-  grid-template-rows: 25px 1fr 25px;
+  grid-template-rows: 35px 1fr 25px;
   grid-template-areas: v-bind('currentLayout');
 }
 

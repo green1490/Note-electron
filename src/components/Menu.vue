@@ -1,21 +1,47 @@
 <script setup lang="ts">
-const props = defineProps({
-  currentFile: String
-})
+
+const props = defineProps<{
+  currentFile: string,
+  markDown: boolean,
+  closed: boolean
+}>()
+
+const changeMode = () => {
+  emit('change-mode')
+}
+
+const emit = defineEmits(['change-mode', 'close'])
 </script>
 
 <template>
-    <div class="menu">
-      {{ props.currentFile }}
+    <div v-show="!closed" class="container-fluid menu">
+      <div class="row align-items-center">
+        <div class="col-9">{{ props.currentFile }}</div>
+        <div class="col text-right">
+          <button @click="changeMode" class="btn btn-outline-dark">
+            <font-awesome-icon
+              v-show="markDown == false"
+              style="color: white;"
+              class="fa fa-lg"
+              icon="fa-solid fa-eye-slash"/>
+              <font-awesome-icon
+              v-show="markDown == true"
+              style="color: white;"
+              class="fa fa-lg"
+              icon="fa-solid fa-eye"/>
+          </button>
+          <button @click="emit('close')" class="btn btn-outline-dark">
+            <font-awesome-icon
+              style="color: white;"
+              class="fa fa-lg"
+              icon="fa-solid fa-circle-xmark"/>
+          </button>
+        </div>
+      </div>
     </div>
 </template>
 
 <style scoped>
-.menu {
-    width: 100%;
-    height: 100%;
-}
-
 .menu {
     background-color: #1a1a1c;
     color: white;

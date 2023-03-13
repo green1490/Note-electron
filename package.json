@@ -41,6 +41,8 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/vue-fontawesome": "^3.0.1",
+    "@types/marked": "^4.0.8",
+    "marked": "^4.2.12",
     "pocketbase": "^0.10.1"
   }
 }
