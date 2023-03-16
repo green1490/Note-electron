@@ -16,7 +16,7 @@ import { marked } from 'marked'
 const pbc = new PockatController(new PocketBase(import.meta.env.VITE_IP))
 pbc.sync()
 
-const isClosed = ref<boolean>(true)
+const isFileClosed = ref<boolean>(true)
 const isInMarkdownMode = ref<boolean>(false)
 const currentContent = ref<any>()
 const currentNode = ref<TreeNode>()
@@ -165,7 +165,7 @@ const replaceEditor = () => {
 }
 
 const closeFile = () => {
-  isClosed.value = true
+  isFileClosed.value = true
 }
 
 ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
@@ -176,7 +176,7 @@ ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
 
 ipcRenderer.on('delete', () => {
   currentNode.value = undefined
-  isClosed.value = true
+  isFileClosed.value = true
 })
 
 ipcRenderer.on('delete', (event, path:string) => {
@@ -187,7 +187,7 @@ ipcRenderer.on('delete', (event, path:string) => {
 
 ipcRenderer.on('read-file', (event, data:string | null, fileName:string, path:string) => {
   if (data != null && node.value) {
-    isClosed.value = false
+    isFileClosed.value = false
     currentNode.value = instertConent(node.value, path, data)
     if (currentNode.value?.content && currentNode.value.path) {
       currentNode.value.content = data
@@ -198,7 +198,7 @@ ipcRenderer.on('read-file', (event, data:string | null, fileName:string, path:st
 
 ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string) => {
   if (node.value) {
-    isClosed.value = false
+    isFileClosed.value = false
     currentNode.value = getNode(node.value, path)
     if (currentNode.value?.content) {
       currentNode.value.content = text
@@ -217,10 +217,10 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
       <FileBrowser v-if="node != undefined" :node="node" :root="path"/>
     </div>
     <div class="editor">
-      <Editor :closed="isClosed" @update="updateEditor" :mode="isInMarkdownMode" :file="(currentContent == undefined) ? currentNode?.content : currentContent "/>
+      <Editor :closed="isFileClosed" @update="updateEditor" :mode="isInMarkdownMode" :file="(currentContent == undefined) ? currentNode?.content : currentContent "/>
     </div>
     <div class="menu">
-      <Menu :closed="isClosed" @close="closeFile" :mark-down="isInMarkdownMode" @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
+      <Menu :closed="isFileClosed" @close="closeFile" :mark-down="isInMarkdownMode" @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
     </div>
     <div class="dock">
       <Dock/>
