@@ -20,7 +20,7 @@
 <script setup lang="ts">
 
 const props = defineProps<{
-  file: String,
+  file?: string | undefined,
   mode?: boolean
   closed:boolean
 }>()

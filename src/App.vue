@@ -18,7 +18,7 @@ pbc.sync()
 
 const isFileClosed = ref<boolean>(true)
 const isInMarkdownMode = ref<boolean>(false)
-const currentContent = ref<any>()
+const currentMarkdownContent = ref<string>()
 const currentNode = ref<TreeNode>()
 const currentLayout = ref('"side browser menu"\n"side browser area"\n"dock dock dock"')
 const sidepanelOpened = ref(true)
@@ -157,10 +157,10 @@ const replaceEditor = () => {
 
   if (isInMarkdownMode.value) {
     if (currentNode.value?.content) {
-      currentContent.value = marked.parse(currentNode.value.content)
+      currentMarkdownContent.value = marked.parse(currentNode.value.content)
     }
   } else {
-    currentContent.value = currentNode.value?.content
+    currentMarkdownContent.value = currentNode.value?.content
   }
 }
 
@@ -193,6 +193,9 @@ ipcRenderer.on('read-file', (event, data:string | null, fileName:string, path:st
       currentNode.value.content = data
       currentNode.value.path = path
     }
+    if (isInMarkdownMode.value) {
+      currentMarkdownContent.value = marked.parse(data)
+    }
   }
 })
 
@@ -202,6 +205,9 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
     currentNode.value = getNode(node.value, path)
     if (currentNode.value?.content) {
       currentNode.value.content = text
+    }
+    if (isInMarkdownMode.value) {
+      currentMarkdownContent.value = marked.parse(text)
     }
   }
 })
@@ -217,7 +223,7 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
       <FileBrowser v-if="node != undefined" :node="node" :root="path"/>
     </div>
     <div class="editor">
-      <Editor :closed="isFileClosed" @update="updateEditor" :mode="isInMarkdownMode" :file="(currentContent == undefined) ? currentNode?.content : currentContent "/>
+      <Editor :closed="isFileClosed" @update="updateEditor" :mode="isInMarkdownMode" :file="(isInMarkdownMode) ? currentMarkdownContent : currentNode?.content "/>
     </div>
     <div class="menu">
       <Menu :closed="isFileClosed" @close="closeFile" :mark-down="isInMarkdownMode" @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
