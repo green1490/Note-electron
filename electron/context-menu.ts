@@ -74,7 +74,7 @@ const template: MenuItemConstructorOptions[] = [
           }
         });
       }
-      win.webContents.send("delete");
+      win.webContents.send("delete",path);
     },
   },
 ];

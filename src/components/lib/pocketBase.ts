@@ -37,7 +37,7 @@ export class PockatController {
                 }
             }
         } catch (err) {
-            console.log('could not connet to the api')
+            console.log('could not connect to the api')
         }
     }
 }
