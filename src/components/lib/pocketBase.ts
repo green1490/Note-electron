@@ -10,6 +10,7 @@ export class PockatController {
 
     async sync() {
         try {
+            // recrate the files from the db then uploads the contet of the sync dir
             const syncDir:{dir:string, files:{name:string,content:string}[]}[] | undefined = await ipcRenderer.invoke(
                 'sync', 
                 await this.pb.collection('directory').getFullList(),

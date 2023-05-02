@@ -217,16 +217,24 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
   <div id="#app"/>
   <div class="cont">
     <div class="sidebar">
-      <Sidebar @toggle="change" @path-selected="newPath" @sync-path="sync" />
+      <Sidebar
+        @toggle="change"
+        @path-selected="newPath"
+        @sync-path="sync" />
     </div>
     <div v-show="sidepanelOpened" class="browser" >
       <FileBrowser v-if="node != undefined" :node="node" :root="path"/>
     </div>
     <div class="editor">
-      <Editor :closed="isFileClosed" @update="updateEditor" :mode="isInMarkdownMode" :file="(isInMarkdownMode) ? currentMarkdownContent : currentNode?.content "/>
+      <Editor :closed="isFileClosed"
+      @update="updateEditor"
+      :mode="isInMarkdownMode"
+      :file="(isInMarkdownMode) ? currentMarkdownContent : currentNode?.content "/>
     </div>
     <div class="menu">
-      <Menu :closed="isFileClosed" @close="closeFile" :mark-down="isInMarkdownMode" @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
+      <Menu :closed="isFileClosed"
+      @close="closeFile" :mark-down="isInMarkdownMode"
+      @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
     </div>
     <div class="dock">
       <Dock/>

@@ -38,13 +38,6 @@ const sync = () => {
           icon="fa-solid fa-sync" />
       </button>
     </div>
-    <div>
-      <button class="btn btn-outline-dark">
-        <font-awesome-icon
-          class="fa fa-lg"
-          icon="fa-solid fa-gear" />
-      </button>
-    </div>
   </div>
 </template>
 
