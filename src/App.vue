@@ -237,7 +237,7 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
       @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
     </div>
     <div class="dock">
-      <Dock/>
+      <Dock :text="currentNode?.content"/>
     </div>
   </div>
 </template>
