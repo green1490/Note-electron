@@ -6,6 +6,7 @@ import { menu } from "../context-menu";
 import { dirReader } from '../dirReader'
 import { readdir, stat, readFile } from "fs/promises";
 import Store from 'electron-store';
+import { markDownMenu } from "../markDownMenu";
 
 const store = new Store()
 let currentFileContent:string
@@ -138,6 +139,7 @@ ipcMain.handle("show-dialog", async () => {
   let selectedPath = await dialog.showOpenDialog(win, {
     properties: ["openDirectory"],
   });
+  store.set('syncPath',selectedPath.filePaths.at(0))
   return selectedPath;
 });
 
@@ -166,18 +168,13 @@ ipcMain.on('context-menu', (_, pathParameter, rootPath:string) => {
   path = pathParameter;
 });
 
+ipcMain.on('markdown-menu', () => {
+  markDownMenu.popup()
+})
+
 ipcMain.on('text-change', (_,text:string) => {
   currentFileContent = text
 })
-
-ipcMain.on('sync-path', async () => {
-  let selectedPath = await dialog.showOpenDialog(win, {
-    properties: ["openDirectory"],
-  });
-  if (selectedPath.filePaths.length != 0) {
-    store.set('syncPath',selectedPath.filePaths.at(0))
-  }
-}) 
 
 ipcMain.handle('sync',async (event, directories:any[],dbFiles:any[] ) => {
   if (syncPath && existsSync(syncPath)) {

@@ -13,10 +13,6 @@ const fileBrowser = async () => {
 const collapse = () => {
   emit('toggle')
 }
-
-const sync = () => {
-  emit('sync-path')
-}
 </script>
 
 <template>
@@ -32,11 +28,11 @@ const sync = () => {
           class="fa fa-lg"
           icon="fa-solid fa-folder"/>
       </button>
-      <button @click="sync" class="btn btn-outline-dark">
+      <!-- <button @click="sync" class="btn btn-outline-dark">
         <font-awesome-icon
           class="fa fa-lg"
           icon="fa-solid fa-sync" />
-      </button>
+      </button> -->
     </div>
   </div>
 </template>

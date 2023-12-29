@@ -13,7 +13,7 @@ import { PockatController } from './components/lib/pocketBase'
 import PocketBase from 'pocketbase'
 import { marked } from 'marked'
 
-const pbc = new PockatController(new PocketBase(import.meta.env.VITE_IP))
+const pbc = new PockatController(new PocketBase('http://127.0.0.1:8090'))
 pbc.sync()
 
 const isFileClosed = ref<boolean>(true)
@@ -134,6 +134,7 @@ const removeNode = (tree: TreeNode, path: string) => {
 const newPath = (newPathValue: OpenDialogReturnValue) => {
   path.value = newPathValue.filePaths.at(0)
   node.value = tree(path.value)
+  ipcRenderer.send('sync-path')
 }
 
 const updateEditor = (text:string) => {
@@ -146,10 +147,6 @@ const updateEditor = (text:string) => {
       ipcRenderer.send('text-change', text)
     }
   }
-}
-
-const sync = () => {
-  ipcRenderer.send('sync-path')
 }
 
 const replaceEditor = () => {
@@ -220,7 +217,7 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
       <Sidebar
         @toggle="change"
         @path-selected="newPath"
-        @sync-path="sync" />
+      />
     </div>
     <div v-show="sidepanelOpened" class="browser" >
       <FileBrowser v-if="node != undefined" :node="node" :root="path"/>
