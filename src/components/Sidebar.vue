@@ -28,11 +28,6 @@ const collapse = () => {
           class="fa fa-lg"
           icon="fa-solid fa-folder"/>
       </button>
-      <!-- <button @click="sync" class="btn btn-outline-dark">
-        <font-awesome-icon
-          class="fa fa-lg"
-          icon="fa-solid fa-sync" />
-      </button> -->
     </div>
   </div>
 </template>

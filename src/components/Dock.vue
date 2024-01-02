@@ -10,6 +10,9 @@ const numberOfCharacter = computed(() => {
 })
 
 const numberOfWord = computed(() => {
+  if (numberOfCharacter.value === 0) {
+    return '0'
+  }
   return props.text?.split(' ').length ?? '0'
 })
 </script>
