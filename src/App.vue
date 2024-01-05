@@ -12,6 +12,8 @@ import Menu from './components/Menu.vue'
 import { PockatController } from './components/lib/pocketBase'
 import PocketBase from 'pocketbase'
 import { marked } from 'marked'
+import Setting from './components/Settings.vue'
+import { theme } from './theme'
 
 const pbc = new PockatController(new PocketBase('http://127.0.0.1:8090'))
 pbc.sync()
@@ -26,6 +28,7 @@ const sidepanelOpened = ref(true)
 const node = ref<TreeNode | undefined>(undefined)
 // root path of the dir
 const path = ref<string | undefined>(undefined)
+const settingMenu = ref<boolean>(false)
 
 const change = () => {
   sidepanelOpened.value = !sidepanelOpened.value
@@ -165,6 +168,10 @@ const closeFile = () => {
   isFileClosed.value = true
 }
 
+const setting = () => {
+  settingMenu.value = !settingMenu.value
+}
+
 ipcRenderer.on('new-node', (event, path: string, nodeName: string) => {
   if (node.value !== undefined) {
     insertNode(node.value, path, nodeName)
@@ -217,24 +224,34 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
       <Sidebar
         @toggle="change"
         @path-selected="newPath"
+        @setting="setting"
       />
     </div>
     <div v-show="sidepanelOpened" class="browser" >
-      <FileBrowser v-if="node != undefined" :node="node" :root="path"/>
+      <FileBrowser
+        v-if="node != undefined"
+        :node="node" :root="path"/>
     </div>
     <div class="editor">
       <Editor :closed="isFileClosed"
-      @update="updateEditor"
-      :mode="isInMarkdownMode"
-      :file="(isInMarkdownMode) ? currentMarkdownContent : currentNode?.content "/>
+        @update="updateEditor"
+        :mode="isInMarkdownMode"
+        :file="(isInMarkdownMode) ? currentMarkdownContent : currentNode?.content "/>
     </div>
     <div class="menu">
-      <Menu :closed="isFileClosed"
-      @close="closeFile" :mark-down="isInMarkdownMode"
-      @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
+      <Menu
+        :closed="isFileClosed"
+        @close="closeFile" :mark-down="isInMarkdownMode"
+        @change-mode="replaceEditor" :current-file="(currentNode) ? currentNode?.fileName() : '' "/>
     </div>
     <div class="dock">
-      <Dock :text="currentNode?.content"/>
+      <Dock
+        :text="currentNode?.content"/>
+    </div>
+    <div class="setting">
+      <Setting
+        v-show="settingMenu"
+      />
     </div>
   </div>
 </template>
@@ -256,6 +273,12 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
   grid-template-columns: 50px 200px 1fr;
   grid-template-rows: 35px 1fr 25px;
   grid-template-areas: v-bind('currentLayout');
+}
+
+.setting {
+  position: absolute;
+  left: 40%;
+  top: 50%;
 }
 
 .cont {
@@ -280,13 +303,13 @@ ipcRenderer.on('change-file', (event, path:string, fileName:string, text:string)
 }
 
 .sidebar {
-  background-color: black;
+  background-color: v-bind('theme.sideBar.backgroundColor');
   grid-area: side;
 }
 
 .browser {
-  color: white;
-  background-color: #131315;
+  color: v-bind('theme.fileBrowser.fontColor');
+  background-color: v-bind('theme.fileBrowser.backgroundColor');
 }
 
 .browser {

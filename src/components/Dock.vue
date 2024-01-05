@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { theme } from '../theme'
 
 const props = defineProps<{
     text?: string | undefined
@@ -35,7 +36,7 @@ const numberOfWord = computed(() => {
 }
 
 .dock {
-    background-color: black;
-    color: white;
+    background-color: v-bind('theme.dock.backgroundColor');
+    color: v-bind('theme.dock.fontColor');
 }
 </style>

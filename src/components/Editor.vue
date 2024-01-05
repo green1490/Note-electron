@@ -2,7 +2,7 @@
   <!-- Event modifier prevents the -->
   <!-- textarea default behaviour  -->
   <div class="con" v-show="mode === false && !closed" >
-    <textarea class="textarea" v-if="props.file != undefined"
+    <textarea ref="text" class="textarea" v-if="props.file != undefined"
     @keydown.tab.prevent = "insertTab($event)"
     @input = "emit('update', ($event.target as HTMLInputElement).value)"
     spellcheck="false"
@@ -18,6 +18,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { theme } from '../theme'
+const text = ref()
 
 const props = defineProps<{
   file?: string | undefined,
@@ -32,7 +35,6 @@ const insertTab = (event:any) => {
   event.target.value = event.target.value.substring(0, start) + '\t' + event.target.value.substring(end)
   event.target.selectionStart = event.target.selectionEnd = start + 1
 }
-
 </script>
 <style scoped>
 .textarea {
@@ -51,13 +53,12 @@ const insertTab = (event:any) => {
 }
 
 .textarea {
-  background-color: #1a1a1c;
+  background-color: v-bind('theme.editor.backgroundColor');
 }
 
 .con {
-  background-color: #1a1a1c;
   width: 100%;
   height: 100%;
-  color: white;
+  color: v-bind('theme.editor.fontColor');
 }
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { theme } from '../theme'
 
 const props = defineProps<{
   currentFile: string,
@@ -43,8 +44,8 @@ const emit = defineEmits(['change-mode', 'close'])
 
 <style scoped>
 .menu {
-    background-color: #1a1a1c;
-    color: white;
-    border-bottom: 1px solid white;
+    background-color: v-bind('theme.menu.backgroundColor');
+    color: v-bind('theme.menu.fontColor');
+    border-bottom: 1px solid v-bind('theme.menu.borderBottomColor');
 }
 </style>

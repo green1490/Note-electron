@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { ipcRenderer, OpenDialogReturnValue } from 'electron'
+import { theme } from '../theme'
 
-const emit = defineEmits(['path-selected', 'toggle', 'sync-path'])
+const emit = defineEmits(['path-selected', 'toggle', 'setting'])
 
 const fileBrowser = async () => {
   const path: OpenDialogReturnValue = await ipcRenderer.invoke(
@@ -10,8 +11,13 @@ const fileBrowser = async () => {
   )
   emit('path-selected', path)
 }
+
 const collapse = () => {
   emit('toggle')
+}
+
+const setting = () => {
+  emit('setting')
 }
 </script>
 
@@ -28,15 +34,14 @@ const collapse = () => {
           class="fa fa-lg"
           icon="fa-solid fa-folder"/>
       </button>
+      <button @click="setting" class="btn btn-outline-dark">
+        <font-awesome-icon class="fa fa-lg" :icon="['fas', 'gear']" />
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.icon {
-  color: white;
-}
-
 .container {
   display: grid;
   grid-template-rows: 0.1fr 3fr 0.4fr;
@@ -49,6 +54,6 @@ const collapse = () => {
 }
 
 .fa {
-  color: white;
+  color: v-bind('theme.sideBar.iconColor');
 }
 </style>

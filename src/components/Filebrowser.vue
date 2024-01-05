@@ -30,6 +30,7 @@ import { TreeNode } from './class/TreeNode'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { stat, statSync } from 'fs'
 import { ipcRenderer } from 'electron'
+import { theme } from '../theme'
 
 const hover = ref(false)
 const expanded = ref(false)
@@ -88,7 +89,7 @@ const directory = computed < Boolean | undefined >(() => {
 }
 
 .node-hover {
-  cursor: pointer;
-  background-color: #3d3b3b;
+  cursor: v-bind('theme.fileBrowser.hover.cursor');
+  background-color: v-bind('theme.fileBrowser.hover.backgroundColor');
 }
 </style>

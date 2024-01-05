@@ -6,7 +6,6 @@ import { menu } from "../context-menu";
 import { dirReader } from '../dirReader'
 import { readdir, stat, readFile } from "fs/promises";
 import Store from 'electron-store';
-import { markDownMenu } from "../markDownMenu";
 
 const store = new Store()
 let currentFileContent:string
@@ -167,10 +166,6 @@ ipcMain.on('context-menu', (_, pathParameter, rootPath:string) => {
   menu.popup();
   path = pathParameter;
 });
-
-ipcMain.on('markdown-menu', () => {
-  markDownMenu.popup()
-})
 
 ipcMain.on('text-change', (_,text:string) => {
   currentFileContent = text
