@@ -18,9 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { theme } from '../theme'
-const text = ref()
 
 const props = defineProps<{
   file?: string | undefined,

@@ -16,9 +16,9 @@ const collapse = () => {
   emit('toggle')
 }
 
-const setting = () => {
-  emit('setting')
-}
+// const setting = () => {
+//   emit('setting')
+// }
 </script>
 
 <template>
@@ -34,9 +34,9 @@ const setting = () => {
           class="fa fa-lg"
           icon="fa-solid fa-folder"/>
       </button>
-      <button @click="setting" class="btn btn-outline-dark">
+      <!-- <button @click="setting" class="btn btn-outline-dark">
         <font-awesome-icon class="fa fa-lg" :icon="['fas', 'gear']" />
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
