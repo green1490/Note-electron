@@ -14,7 +14,24 @@ const numberOfWord = computed(() => {
   if (numberOfCharacter.value === 0) {
     return '0'
   }
-  return props.text?.split(' ').length ?? '0'
+  const numberList = props.text?.split(' ')
+  let number = numberList?.length
+  const banCharacter = [
+    '#',
+    '##',
+    '###',
+    '####',
+    '-',
+    '>'
+  ]
+  numberList?.forEach((item) => {
+    if (banCharacter.includes(item)) {
+      if (number !== undefined) {
+        number = number - 1
+      }
+    }
+  })
+  return number ?? '0'
 })
 </script>
 
